@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SVG Test</title>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #0066FF;
+      color: white;
+      font-family: Arial, sans-serif;
+    }
+    .test-container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      align-items: center;
+    }
+    .test-item {
+      border: 1px solid white;
+      padding: 20px;
+      border-radius: 8px;
+    }
+    h1 {
+      margin-bottom: 40px;
+    }
+  </style>
+</head>
+<body>
+  <h1>SVG Rendering Test</h1>
+  
+  <div class="test-container">
+    <div class="test-item">
+      <h2>Using img tag:</h2>
+      <img src="/logo.svg" alt="Logo" width="120" height="40">
+    </div>
+    
+    <div class="test-item">
+      <h2>Using object tag:</h2>
+      <object data="/logo.svg" type="image/svg+xml" width="120" height="40"></object>
+    </div>
+    
+    <div class="test-item">
+      <h2>Using embed tag:</h2>
+      <embed src="/logo.svg" type="image/svg+xml" width="120" height="40">
+    </div>
+    
+    <div class="test-item">
+      <h2>Using iframe tag:</h2>
+      <iframe src="/logo.svg" width="120" height="40" style="border: none;"></iframe>
+    </div>
+  </div>
+  
+  <p>If you can see the logo in any of these methods, use that method in your Next.js app.</p>
+  <p>Access this page at: <a href="/test-svg.html" style="color: white; text-decoration: underline;">/test-svg.html</a></p>
+</body>
+</html>

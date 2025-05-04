@@ -1,0 +1,10 @@
+<svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    .logo-text {
+      font-family: Arial, sans-serif;
+      font-weight: bold;
+      fill: white;
+    }
+  </style>
+  <text x="10" y="28" class="logo-text" font-size="24">YT2MP3</text>
+</svg>

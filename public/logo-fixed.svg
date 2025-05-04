@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
+  <!-- Add a white background rectangle -->
+  <rect width="120" height="40" fill="#ffffff" rx="4" ry="4"/>
+  
+  <!-- Include the original SVG content but ensure it has visible colors -->
+  <g fill="#0066FF">
+    <!-- This is a placeholder shape - your actual logo content will replace this -->
+    <path d="M20 10 L30 10 L30 30 L20 30 Z"/>
+    <text x="40" y="25" font-family="Arial, sans-serif" font-size="16" font-weight="bold">YT2MP3</text>
+  </g>
+</svg>
