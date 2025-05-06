@@ -44,27 +44,24 @@ export default function Home() {
       <Footer />
 
       {/* Add structured data for SEO */}
-      <Script
-        id="structured-data"
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
+      <Script id="structured-data" type="application/ld+json" strategy="afterInteractive">
+        {`
+          {
             "@context": "https://schema.org",
             "@type": "WebApplication",
-            name: "YT2MP3 Converter",
-            url: "https://yt2mate.pro/",
-            description:
-              "Convert YouTube videos and Shorts to MP3 format with our free online converter. High-quality audio, fast downloads, and no registration required!",
-            applicationCategory: "MultimediaApplication",
-            operatingSystem: "All",
-            offers: {
+            "name": "YT2MP3 Converter",
+            "url": "https://yt2mate.pro/",
+            "description": "Convert YouTube videos and Shorts to MP3 format with our free online converter. High-quality audio, fast downloads, and no registration required!",
+            "applicationCategory": "MultimediaApplication",
+            "operatingSystem": "All",
+            "offers": {
               "@type": "Offer",
-              price: "0",
-              priceCurrency: "USD",
-            },
-          }),
-        }}
-      />
+              "price": "0",
+              "priceCurrency": "USD"
+            }
+          }
+        `}
+      </Script>
     </div>
   )
 }

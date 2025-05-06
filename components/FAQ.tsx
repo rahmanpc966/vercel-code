@@ -48,58 +48,56 @@ export default function FAQ() {
       </div>
 
       {/* Add FAQ Schema Markup */}
-      <Script
-        id="faq-schema"
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
+      <Script id="faq-schema" type="application/ld+json" strategy="afterInteractive">
+        {`
+          {
             "@context": "https://schema.org",
             "@type": "FAQPage",
-            mainEntity: [
+            "mainEntity": [
               {
                 "@type": "Question",
-                name: "How do I use YT2MP3 to convert YouTube to MP3?",
-                acceptedAnswer: {
+                "name": "How do I use YT2MP3 to convert YouTube to MP3?",
+                "acceptedAnswer": {
                   "@type": "Answer",
-                  text: "Simply paste the YouTube video URL into our converter, click the convert button, and download your MP3 file. Our YouTube to MP3 converter works with all types of YouTube videos.",
-                },
+                  "text": "Simply paste the YouTube video URL into our converter, click the convert button, and download your MP3 file. Our YouTube to MP3 converter works with all types of YouTube videos."
+                }
               },
               {
                 "@type": "Question",
-                name: "Is this YouTube to MP3 converter free to use?",
-                acceptedAnswer: {
+                "name": "Is this YouTube to MP3 converter free to use?",
+                "acceptedAnswer": {
                   "@type": "Answer",
-                  text: "Yes, our YouTube to MP3 service is completely free. You can convert and download as many MP3s from YouTube as you want without any cost.",
-                },
+                  "text": "Yes, our YouTube to MP3 service is completely free. You can convert and download as many MP3s from YouTube as you want without any cost."
+                }
               },
               {
                 "@type": "Question",
-                name: "What's the maximum length of YouTube video I can convert to MP3?",
-                acceptedAnswer: {
+                "name": "What's the maximum length of YouTube video I can convert to MP3?",
+                "acceptedAnswer": {
                   "@type": "Answer",
-                  text: "You can convert YouTube videos up to 2 hours in length to MP3 format. For longer videos, you may need to split them into smaller parts.",
-                },
+                  "text": "You can convert YouTube videos up to 2 hours in length to MP3 format. For longer videos, you may need to split them into smaller parts."
+                }
               },
               {
                 "@type": "Question",
-                name: "Is it legal to convert YouTube videos to MP3?",
-                acceptedAnswer: {
+                "name": "Is it legal to convert YouTube videos to MP3?",
+                "acceptedAnswer": {
                   "@type": "Answer",
-                  text: "Converting YouTube videos to MP3 should only be done for content you have permission to use or falls under fair use. Always respect copyright laws and content creators' rights when using our YouTube to MP3 converter.",
-                },
+                  "text": "Converting YouTube videos to MP3 should only be done for content you have permission to use or falls under fair use. Always respect copyright laws and content creators' rights when using our YouTube to MP3 converter."
+                }
               },
               {
                 "@type": "Question",
-                name: "What quality are the converted MP3 files from YouTube?",
-                acceptedAnswer: {
+                "name": "What quality are the converted MP3 files from YouTube?",
+                "acceptedAnswer": {
                   "@type": "Answer",
-                  text: "We offer high-quality MP3 conversions from YouTube with bitrates up to 320kbps, ensuring excellent audio quality for your converted files.",
-                },
-              },
-            ],
-          }),
-        }}
-      />
+                  "text": "We offer high-quality MP3 conversions from YouTube with bitrates up to 320kbps, ensuring excellent audio quality for your converted files."
+                }
+              }
+            ]
+          }
+        `}
+      </Script>
     </section>
   )
 }

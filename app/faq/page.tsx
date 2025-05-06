@@ -108,58 +108,56 @@ export default function FAQ() {
       </main>
 
       <Footer />
-      <Script
-        id="schema-org"
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
+      <Script id="schema-org" type="application/ld+json" strategy="afterInteractive">
+        {`
+          {
             "@context": "https://schema.org",
             "@type": "FAQPage",
-            mainEntity: [
+            "mainEntity": [
               {
                 "@type": "Question",
-                name: "How do I convert a YouTube video to MP3?",
-                acceptedAnswer: {
+                "name": "How do I convert a YouTube video to MP3?",
+                "acceptedAnswer": {
                   "@type": "Answer",
-                  text: "Simply paste the YouTube video URL into the converter box on our homepage and click the 'Convert to MP3' button. Once the conversion is complete, you'll be able to download the MP3 file.",
-                },
+                  "text": "Simply paste the YouTube video URL into the converter box on our homepage and click the 'Convert to MP3' button. Once the conversion is complete, you'll be able to download the MP3 file."
+                }
               },
               {
                 "@type": "Question",
-                name: "Is this service free?",
-                acceptedAnswer: {
+                "name": "Is this service free?",
+                "acceptedAnswer": {
                   "@type": "Answer",
-                  text: "Yes, our YouTube to MP3 converter is completely free to use.",
-                },
+                  "text": "Yes, our YouTube to MP3 converter is completely free to use."
+                }
               },
               {
                 "@type": "Question",
-                name: "What's the maximum length of video I can convert?",
-                acceptedAnswer: {
+                "name": "What's the maximum length of video I can convert?",
+                "acceptedAnswer": {
                   "@type": "Answer",
-                  text: "Our service can convert videos up to 2 hours in length. For longer videos, you may need to split them into smaller parts before conversion.",
-                },
+                  "text": "Our service can convert videos up to 2 hours in length. For longer videos, you may need to split them into smaller parts before conversion."
+                }
               },
               {
                 "@type": "Question",
-                name: "What's the quality of the converted MP3?",
-                acceptedAnswer: {
+                "name": "What's the quality of the converted MP3?",
+                "acceptedAnswer": {
                   "@type": "Answer",
-                  text: "We provide high-quality MP3 conversions. The exact bitrate may vary, but it's typically up to 320kbps, which offers excellent audio quality.",
-                },
+                  "text": "We provide high-quality MP3 conversions. The exact bitrate may vary, but it's typically up to 320kbps, which offers excellent audio quality."
+                }
               },
               {
                 "@type": "Question",
-                name: "Is it legal to convert YouTube videos to MP3?",
-                acceptedAnswer: {
+                "name": "Is it legal to convert YouTube videos to MP3?",
+                "acceptedAnswer": {
                   "@type": "Answer",
-                  text: "The legality can vary depending on your location and the specific content. It's generally considered acceptable for personal use, but always respect copyright laws and content creators' rights.",
-                },
-              },
-            ],
-          }),
-        }}
-      />
+                  "text": "The legality can vary depending on your location and the specific content. It's generally considered acceptable for personal use, but always respect copyright laws and content creators' rights."
+                }
+              }
+            ]
+          }
+        `}
+      </Script>
     </div>
   )
 }

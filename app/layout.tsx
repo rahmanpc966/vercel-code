@@ -69,44 +69,35 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        {/* Force reload of favicon by adding cache-busting query parameter */}
-        <link rel="icon" href={`/favicon.ico?v=${Date.now()}`} />
-        <link rel="icon" type="image/png" sizes="32x32" href={`/favicon-32x32.png?v=${Date.now()}`} />
-        <link rel="icon" type="image/png" sizes="16x16" href={`/favicon-16x16.png?v=${Date.now()}`} />
-        <link rel="apple-touch-icon" href={`/apple-touch-icon.png?v=${Date.now()}`} />
-        <link rel="manifest" href={`/site.webmanifest?v=${Date.now()}`} />
-
-        {/* Add this script to force favicon refresh */}
-        <Script id="favicon-refresh" strategy="beforeInteractive">
-          {`
-            // Force favicon refresh
-            function refreshFavicon() {
-              const links = document.querySelectorAll('link[rel="icon"], link[rel="shortcut icon"], link[rel="apple-touch-icon"]');
-              links.forEach(link => {
-                const href = link.getAttribute('href');
-                if (href) {
-                  link.setAttribute('href', href.split('?')[0] + '?v=' + Date.now());
-                }
-              });
-            }
-            
-            // Run on page load
-            refreshFavicon();
-            
-            // Also run when page becomes visible again (tab switching)
-            document.addEventListener('visibilitychange', function() {
-              if (document.visibilityState === 'visible') {
-                refreshFavicon();
-              }
-            });
-          `}
-        </Script>
+        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        <link rel="manifest" href="/site.webmanifest" />
       </head>
       <body className={inter.className}>
         <ToastProvider>
           {children}
           <Toaster />
         </ToastProvider>
+
+        {/* Google Analytics */}
+        {process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID && (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID}`}
+              strategy="afterInteractive"
+            />
+            <Script id="google-analytics" strategy="afterInteractive">
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID}');
+              `}
+            </Script>
+          </>
+        )}
       </body>
     </html>
   )
