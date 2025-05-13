@@ -15,10 +15,8 @@ export default function FAQ() {
       <Navigation />
 
       <main className="flex-1 container mx-auto px-4 py-8">
-        {/* This h1 will be placed directly in the body by Next.js */}
         <h1 className="text-3xl font-bold mb-6">YouTube to MP3 Converter FAQ | Common Questions & Answers</h1>
 
-        {/* Rest of the content remains the same */}
         <div className="space-y-6">
           <div>
             <h3 className="text-xl font-semibold mb-2">How do I convert a YouTube video to MP3?</h3>
@@ -104,7 +102,6 @@ export default function FAQ() {
             best online converter tool that combines simplicity with powerful features.
           </p>
         </div>
-        {/* Rest of the component remains unchanged */}
       </main>
 
       <Footer />

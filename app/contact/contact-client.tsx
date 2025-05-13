@@ -47,7 +47,6 @@ export default function ContactClient() {
     <div className="min-h-screen flex flex-col bg-gray-50">
       <Navigation />
       <main className="flex-1 container mx-auto px-4 py-8">
-        {/* This h1 will be placed directly in the body by Next.js */}
         <h1 className="text-4xl font-bold mb-6 text-center text-blue-600">
           Contact YT2MP3 Support | Get Help with YouTube to MP3 Conversion
         </h1>
@@ -57,7 +56,6 @@ export default function ContactClient() {
           soon as possible.
         </p>
 
-        {/* Rest of the component remains unchanged */}
         <div className="max-w-md mx-auto bg-white p-8 rounded-lg shadow-md">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
