@@ -8,6 +8,9 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import type React from "react"
+import Breadcrumb from "@/components/Breadcrumb"
+import Script from "next/script"
+import OrganizationSchema from "@/components/OrganizationSchema"
 
 export default function ContactClient() {
   const [name, setName] = useState("")
@@ -46,6 +49,9 @@ export default function ContactClient() {
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       <Navigation />
+      <div className="container mx-auto px-4 py-2">
+        <Breadcrumb items={[{ label: "Contact", href: "/contact" }]} />
+      </div>
       <main className="flex-1 container mx-auto px-4 py-8">
         <h1 className="text-4xl font-bold mb-6 text-center text-blue-600">
           Contact YT2MP3 Support | Get Help with YouTube to MP3 Conversion
@@ -71,6 +77,7 @@ export default function ContactClient() {
                 required
                 className="w-full"
                 placeholder="Your name"
+                aria-required="true"
               />
             </div>
             <div>
@@ -86,6 +93,7 @@ export default function ContactClient() {
                 required
                 className="w-full"
                 placeholder="example@gmail.com"
+                aria-required="true"
               />
             </div>
             <div>
@@ -101,6 +109,7 @@ export default function ContactClient() {
                 required
                 className="w-full"
                 placeholder="Your message here..."
+                aria-required="true"
               />
             </div>
             <Button type="submit" disabled={isSubmitting} className="w-full">
@@ -110,7 +119,7 @@ export default function ContactClient() {
         </div>
 
         {preview && (
-          <div className="mt-8 p-6 border rounded-lg bg-white shadow-sm max-w-md mx-auto">
+          <div className="mt-8 p-6 border rounded-lg bg-white shadow-sm max-w-md mx-auto" aria-live="polite">
             <h2 className="text-2xl font-semibold mb-4 text-blue-600">Message Preview</h2>
             <div className="space-y-2">
               <p>
@@ -126,9 +135,73 @@ export default function ContactClient() {
             </div>
           </div>
         )}
+
+        <section className="mt-12 max-w-2xl mx-auto">
+          <h2 className="text-2xl font-bold mb-4">Other Ways to Reach Us</h2>
+          <div className="space-y-4">
+            <div>
+              <h3 className="text-xl font-semibold">Email Support</h3>
+              <p className="text-gray-600">For general inquiries: support@yt2mate.pro</p>
+            </div>
+            <div>
+              <h3 className="text-xl font-semibold">Frequently Asked Questions</h3>
+              <p className="text-gray-600">
+                Before contacting us, you might find your answer in our{" "}
+                <a href="/faq" className="text-blue-600 hover:underline">
+                  FAQ section
+                </a>
+                .
+              </p>
+            </div>
+            <div>
+              <h3 className="text-xl font-semibold">Related Resources</h3>
+              <ul className="list-disc pl-6 mt-2 space-y-1">
+                <li>
+                  <a href="/youtube-to-mp3" className="text-blue-600 hover:underline">
+                    YouTube to MP3 Converter
+                  </a>
+                </li>
+                <li>
+                  <a href="/youtube-shorts-to-mp3" className="text-blue-600 hover:underline">
+                    YouTube Shorts to MP3 Converter
+                  </a>
+                </li>
+                <li>
+                  <a href="/terms" className="text-blue-600 hover:underline">
+                    Terms of Service
+                  </a>
+                </li>
+                <li>
+                  <a href="/privacy" className="text-blue-600 hover:underline">
+                    Privacy Policy
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </section>
       </main>
 
       <Footer />
+
+      {/* Schema Markup */}
+      <OrganizationSchema />
+      <Script id="contact-page-schema" type="application/ld+json" strategy="afterInteractive">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "ContactPage",
+          name: "Contact YT2MP3 Support",
+          description:
+            "Contact our support team for assistance with YouTube to MP3 conversions, downloads, or technical issues.",
+          url: "https://yt2mate.pro/contact",
+          mainEntity: {
+            "@type": "Organization",
+            name: "YT2MP3",
+            email: "support@yt2mate.pro",
+            url: "https://yt2mate.pro",
+          },
+        })}
+      </Script>
     </div>
   )
 }

@@ -106,7 +106,11 @@ export default function YouTubeConverter() {
 
   return (
     <div className="w-full max-w-4xl mx-auto">
-      <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-4 justify-center">
+      <form
+        onSubmit={handleSubmit}
+        className="flex flex-col sm:flex-row gap-4 justify-center"
+        aria-label="YouTube to MP3 converter form"
+      >
         <Input
           type="text"
           placeholder="Paste YouTube video or short URL here"
@@ -114,16 +118,24 @@ export default function YouTubeConverter() {
           value={url}
           onChange={(e) => setUrl(e.target.value)}
           required
+          aria-label="YouTube video URL"
         />
-        <Button type="submit" className="bg-gray-900 hover:bg-gray-800 text-white px-6 h-12 text-lg" disabled={loading}>
-          {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+        <Button
+          type="submit"
+          className="bg-gray-900 hover:bg-gray-800 text-white px-6 h-12 text-lg"
+          disabled={loading}
+          aria-label="Convert to MP3"
+        >
+          {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" /> : null}
           Convert to MP3
         </Button>
       </form>
       {result && (
-        <div className="mt-4">
+        <div className="mt-4" aria-live="polite">
           {result.error ? (
-            <p className="text-red-500 inline-block p-2 bg-white rounded">{result.error}</p>
+            <p className="text-red-500 inline-block p-2 bg-white rounded" role="alert">
+              {result.error}
+            </p>
           ) : (
             <div className="text-center inline-block bg-white px-4 py-3 rounded">
               {result.message && (
@@ -133,8 +145,14 @@ export default function YouTubeConverter() {
                 <button
                   onClick={() => handleDownload(result.link!)}
                   className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-5 rounded inline-flex items-center"
+                  aria-label="Download MP3 file"
                 >
-                  <svg className="fill-current w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                  <svg
+                    className="fill-current w-4 h-4 mr-2"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                    aria-hidden="true"
+                  >
                     <path d="M13 8V2H7v6H2l8 8 8-8h-5zM0 18h20v2H0v-2z" />
                   </svg>
                   <span>Download MP3</span>

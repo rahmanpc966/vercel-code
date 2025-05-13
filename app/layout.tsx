@@ -9,12 +9,12 @@ import Script from "next/script"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "YT2MP3 - YouTube to MP3 Converter",
-  description: "Convert your favorite YouTube videos & short to high-quality MP3 files for free.",
-  metadataBase: new URL("https://yt2mate.pro"),
-  alternates: {
-    canonical: "/",
+  title: {
+    template: "%s | YT2MP3",
+    default: "YT2MP3 - YouTube to MP3 Converter",
   },
+  description: "Convert your favorite YouTube videos & shorts to high-quality MP3 files for free.",
+  metadataBase: new URL("https://yt2mate.pro"),
   robots: {
     index: true,
     follow: true,
@@ -98,6 +98,24 @@ export default function RootLayout({
             </Script>
           </>
         )}
+
+        {/* Global Ad Script - This loads the ad library globally */}
+        <Script id="ad-options" strategy="afterInteractive">
+          {`
+            window.atOptions = {
+              'key' : '37943d3fd9cce351f51aed181182d90d',
+              'format' : 'iframe',
+              'height' : 250,
+              'width' : 300,
+              'params' : {}
+            };
+          `}
+        </Script>
+        <Script
+          src="//www.highperformanceformat.com/37943d3fd9cce351f51aed181182d90d/invoke.js"
+          strategy="afterInteractive"
+          id="ad-invoke"
+        />
       </body>
     </html>
   )
