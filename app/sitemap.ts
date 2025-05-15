@@ -12,6 +12,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 1,
     },
     {
+      url: `${baseUrl}/youtube-to-mp3`,
+      lastModified: new Date(),
+      changeFrequency: "daily",
+      priority: 0.9,
+    },
+    {
+      url: `${baseUrl}/youtube-shorts-to-mp3`,
+      lastModified: new Date(),
+      changeFrequency: "daily",
+      priority: 0.9,
+    },
+    {
       url: `${baseUrl}/faq`,
       lastModified: new Date(),
       changeFrequency: "weekly",
@@ -36,22 +48,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.5,
     },
     {
-      url: `${baseUrl}/youtube-to-mp3`,
+      url: `${baseUrl}/schema-test`,
       lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/youtube-shorts-to-mp3`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/979d254e104f4903b5ae619957556785.txt`,
-      lastModified: new Date(),
-      changeFrequency: "yearly",
-      priority: 0.1,
+      changeFrequency: "monthly",
+      priority: 0.3,
     },
   ]
 }
