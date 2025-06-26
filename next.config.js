@@ -15,9 +15,25 @@ const nextConfig = {
       test: /\.svg$/,
       use: ["@svgr/webpack"],
     })
+
+    // Monaco Editor configuration
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      fs: false,
+      path: false,
+      crypto: false,
+    }
+
+    // Define MonacoEnvironment for webpack
+    config.plugins.push(
+      new config.webpack.DefinePlugin({
+        "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV),
+      }),
+    )
+
     return config
   },
-  // Add this to ensure proper MIME types for SVG files
+  // Add headers for proper MIME types and CSP
   async headers() {
     return [
       {
@@ -26,6 +42,23 @@ const nextConfig = {
           {
             key: "Content-Type",
             value: "image/svg+xml",
+          },
+        ],
+      },
+      {
+        source: "/:path*",
+        headers: [
+          {
+            key: "Content-Security-Policy",
+            value: [
+              "default-src 'self'",
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://www.highperformanceformat.com",
+              "style-src 'self' 'unsafe-inline'",
+              "img-src 'self' data: https:",
+              "font-src 'self' data:",
+              "connect-src 'self' https://www.google-analytics.com https://www.highperformanceformat.com",
+              "frame-src 'self' https://www.highperformanceformat.com",
+            ].join("; "),
           },
         ],
       },
