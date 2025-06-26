@@ -1,8 +1,13 @@
 import type { Metadata } from "next"
 import Navigation from "@/components/Navigation"
 import Footer from "@/components/Footer"
-import AdTester from "@/components/AdTester"
-import AdUnit from "@/components/AdUnit"
+import dynamic from "next/dynamic"
+
+const AdTester = dynamic(() => import("@/components/AdTester"), { ssr: false })
+const AdUnit = dynamic(() => import("@/components/AdUnit"), { ssr: false })
+
+// Disable static prerender for this route
+const disableStaticPrerender = "force-dynamic"
 
 export const metadata: Metadata = {
   title: "Ad Testing Dashboard - YT2MP3",
