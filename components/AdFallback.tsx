@@ -2,9 +2,10 @@ interface AdFallbackProps {
   width?: number
   height?: number
   message?: string
+  error?: string
 }
 
-export default function AdFallback({ width = 300, height = 250, message = "Advertisement" }: AdFallbackProps) {
+export default function AdFallback({ width = 300, height = 250, message = "Advertisement", error }: AdFallbackProps) {
   return (
     <div
       style={{
@@ -23,11 +24,31 @@ export default function AdFallback({ width = 300, height = 250, message = "Adver
         margin: "0 auto",
         position: "relative",
         overflow: "hidden",
+        padding: "16px",
+        textAlign: "center",
       }}
     >
       <div style={{ fontSize: "24px", marginBottom: "8px", opacity: 0.5 }}>📢</div>
       <div style={{ marginBottom: "4px" }}>{message}</div>
       <div style={{ fontSize: "12px", opacity: 0.7 }}>Space Reserved</div>
+
+      {error && (
+        <div
+          style={{
+            fontSize: "10px",
+            marginTop: "8px",
+            padding: "4px 8px",
+            background: "rgba(220, 53, 69, 0.1)",
+            border: "1px solid rgba(220, 53, 69, 0.2)",
+            borderRadius: "4px",
+            color: "#dc3545",
+            maxWidth: "100%",
+            wordBreak: "break-word",
+          }}
+        >
+          {error}
+        </div>
+      )}
 
       {/* Subtle pattern overlay */}
       <div

@@ -9,7 +9,7 @@ const nextConfig = {
     formats: ["image/avif", "image/webp"],
     unoptimized: true,
   },
-  webpack(config) {
+  webpack(config, { webpack }) {
     // Add SVG handling
     config.module.rules.push({
       test: /\.svg$/,
@@ -24,10 +24,10 @@ const nextConfig = {
       crypto: false,
     }
 
-    // Define MonacoEnvironment for webpack
+    // Use webpack from the context parameter instead of config.webpack
     config.plugins.push(
-      new config.webpack.DefinePlugin({
-        "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV),
+      new webpack.DefinePlugin({
+        "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV || "production"),
       }),
     )
 

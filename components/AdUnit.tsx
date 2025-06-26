@@ -9,6 +9,7 @@ interface AdUnitProps {
   width?: number
   height?: number
   className?: string
+  testMode?: boolean
 }
 
 export default function AdUnit({
@@ -16,37 +17,57 @@ export default function AdUnit({
   width = 300,
   height = 250,
   className = "",
+  testMode = false,
 }: AdUnitProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const [adStatus, setAdStatus] = useState<"loading" | "loaded" | "failed" | "blocked">("loading")
+  const [loadTime, setLoadTime] = useState<number>(0)
+  const [error, setError] = useState<string>("")
   const scriptLoadedRef = useRef(false)
+  const startTimeRef = useRef<number>(0)
+
+  // Enhanced logging for test mode
+  const log = (message: string, data?: any) => {
+    if (testMode) {
+      console.log(`[AdUnit-${adKey.slice(0, 8)}] ${message}`, data || "")
+    }
+  }
 
   useEffect(() => {
+    startTimeRef.current = Date.now()
+    log("Starting ad loading process")
+
     // Skip if we're in development and ads should be skipped
     const isDevelopment = typeof window !== "undefined" && window.location.hostname === "localhost"
     const skipAds = isDevelopment && localStorage.getItem("SKIP_ADS") === "true"
 
     if (skipAds) {
+      log("Skipping ads (SKIP_ADS enabled)")
       setAdStatus("blocked")
+      setError("Development mode - ads skipped")
       return
     }
 
     // Check if container is valid
     if (!containerRef.current) {
-      console.warn("[AdUnit] Container ref is not available")
+      log("Container ref is not available")
       setAdStatus("failed")
+      setError("Container not found")
       return
     }
 
     // Prevent duplicate script loading
     if (scriptLoadedRef.current) {
+      log("Script already loaded, skipping")
       return
     }
 
     // Check if script already exists globally
     const existingScript = document.querySelector(`script[data-ad-key="${adKey}"]`)
     if (existingScript) {
+      log("Script already exists in DOM")
       setAdStatus("loaded")
+      setLoadTime(Date.now() - startTimeRef.current)
       return
     }
 
@@ -60,6 +81,7 @@ export default function AdUnit({
           width: width,
           params: {},
         }
+        log("Set atOptions", (window as any).atOptions)
       }
 
       // Create ad script with better error handling
@@ -71,42 +93,69 @@ export default function AdUnit({
       script.crossOrigin = "anonymous"
       script.src = `https://www.highperformanceformat.com/${adKey}/invoke.js`
 
+      log("Created script element", { src: script.src })
+
       // Set up event handlers
       script.onload = () => {
-        console.log("[AdUnit] Ad script loaded successfully")
+        const duration = Date.now() - startTimeRef.current
+        log(`Ad script loaded successfully in ${duration}ms`)
         setAdStatus("loaded")
+        setLoadTime(duration)
         scriptLoadedRef.current = true
       }
 
-      script.onerror = (error) => {
-        console.warn("[AdUnit] Ad script failed to load:", error)
+      script.onerror = (errorEvent) => {
+        const duration = Date.now() - startTimeRef.current
+        const errorMsg = `Script failed to load (${duration}ms) - likely blocked by ad blocker or DNS issue`
+        log("Ad script error", errorEvent)
         setAdStatus("blocked")
+        setError(errorMsg)
+        setLoadTime(duration)
         scriptLoadedRef.current = false
       }
 
       // Add timeout for loading
       const timeout = setTimeout(() => {
         if (adStatus === "loading") {
-          console.warn("[AdUnit] Ad script loading timeout")
+          const duration = Date.now() - startTimeRef.current
+          const timeoutMsg = `Ad script loading timeout after ${duration}ms`
+          log("Ad script timeout")
           setAdStatus("failed")
+          setError(timeoutMsg)
+          setLoadTime(duration)
         }
       }, 10000) // 10 second timeout
 
       // Append script to head
       document.head.appendChild(script)
+      log("Script appended to head")
 
       // Cleanup function
       return () => {
         clearTimeout(timeout)
         if (script.parentNode) {
           script.parentNode.removeChild(script)
+          log("Script removed from DOM")
         }
       }
     } catch (error) {
-      console.error("[AdUnit] Error setting up ad script:", error)
+      const errorMsg = `Error setting up ad script: ${error}`
+      log("Setup error", error)
       setAdStatus("failed")
+      setError(errorMsg)
     }
-  }, [adKey, height, width, adStatus])
+  }, [adKey, height, width, testMode])
+
+  // Status indicator for test mode
+  const StatusIndicator = () => {
+    if (!testMode) return null
+
+    return (
+      <div className="absolute top-0 right-0 z-10 bg-black text-white text-xs px-2 py-1 rounded-bl">
+        {adStatus.toUpperCase()} {loadTime > 0 && `(${loadTime}ms)`}
+      </div>
+    )
+  }
 
   return (
     <ClientOnly
@@ -140,10 +189,20 @@ export default function AdUnit({
         }}
         role="complementary"
         aria-label="Advertisement"
+        data-ad-status={adStatus}
+        data-ad-key={adKey}
       >
+        <StatusIndicator />
+
         {(adStatus === "failed" || adStatus === "blocked") && (
-          <AdFallback width={width} height={height} message={adStatus === "blocked" ? "Ad Blocked" : "Advertisement"} />
+          <AdFallback
+            width={width}
+            height={height}
+            message={adStatus === "blocked" ? "Ad Blocked" : "Advertisement"}
+            error={testMode ? error : undefined}
+          />
         )}
+
         {adStatus === "loading" && (
           <div
             style={{
@@ -161,6 +220,7 @@ export default function AdUnit({
             aria-live="polite"
           >
             Loading advertisement...
+            {testMode && loadTime > 0 && <span className="ml-2">({loadTime}ms)</span>}
           </div>
         )}
       </div>
