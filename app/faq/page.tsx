@@ -5,7 +5,7 @@ import Script from "next/script"
 import Breadcrumb from "@/components/Breadcrumb"
 import OrganizationSchema from "@/components/OrganizationSchema"
 import ArticleSchema from "@/components/ArticleSchema"
-import AdUnit from "@/components/AdUnit"
+import InvisibleAdUnit from "@/components/InvisibleAdUnit"
 import RelatedContent from "@/components/RelatedContent"
 import InternalLinkBanner from "@/components/InternalLinkBanner"
 
@@ -52,7 +52,7 @@ export default function FAQ() {
             </section>
 
             <div className="my-6">
-              <AdUnit />
+              <InvisibleAdUnit />
             </div>
 
             <section>
@@ -86,7 +86,7 @@ export default function FAQ() {
             </section>
 
             <div className="my-6">
-              <AdUnit />
+              <InvisibleAdUnit />
             </div>
 
             <section>

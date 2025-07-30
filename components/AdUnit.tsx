@@ -208,20 +208,12 @@ export default function AdUnit({
             style={{
               width: "100%",
               height: "100%",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              background: "#f8f9fa",
-              border: "1px solid #e9ecef",
-              borderRadius: "4px",
-              color: "#6c757d",
-              fontSize: "14px",
+              display: "block",
+              // No visible content while loading
             }}
             aria-live="polite"
-          >
-            Loading advertisement...
-            {testMode && loadTime > 0 && <span className="ml-2">({loadTime}ms)</span>}
-          </div>
+            aria-hidden="true"
+          />
         )}
       </div>
     </ClientOnly>

@@ -237,20 +237,12 @@ export default function ImprovedAdUnit({
             style={{
               width: "100%",
               height: "100%",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              background: "#f8f9fa",
-              border: "1px solid #e9ecef",
-              borderRadius: "4px",
+              display: "block",
+              // No visible loading indicator
             }}
             aria-live="polite"
-          >
-            <div className="flex items-center space-x-2">
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
-              <span style={{ color: "#6c757d", fontSize: "14px" }}>Loading ad...</span>
-            </div>
-          </div>
+            aria-hidden="true"
+          />
         )}
 
         {/* Failed/Blocked states */}
@@ -270,18 +262,11 @@ export default function ImprovedAdUnit({
             style={{
               width: "100%",
               height: "100%",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              background: "#f8f9fa",
-              border: "1px solid #e9ecef",
-              borderRadius: "4px",
-              color: "#6c757d",
-              fontSize: "14px",
+              display: "block",
+              // No visible placeholder
             }}
-          >
-            Ad will load when visible
-          </div>
+            aria-hidden="true"
+          />
         )}
       </div>
     </ClientOnly>

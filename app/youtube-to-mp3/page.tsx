@@ -10,7 +10,7 @@ import Breadcrumb from "@/components/Breadcrumb"
 import OrganizationSchema from "@/components/OrganizationSchema"
 import WebsiteSchema from "@/components/WebsiteSchema"
 import Script from "next/script"
-import AdUnit from "@/components/AdUnit"
+import InvisibleAdUnit from "@/components/InvisibleAdUnit"
 import RelatedContent from "@/components/RelatedContent"
 
 export const metadata: Metadata = {
@@ -95,7 +95,7 @@ export default function YouTubeToMP3Page() {
         </section>
 
         <div className="container mx-auto px-4 py-8">
-          <AdUnit />
+          <InvisibleAdUnit />
         </div>
 
         {/* Comprehensive Guide Section */}
@@ -255,7 +255,7 @@ export default function YouTubeToMP3Page() {
         <HowItWorks />
 
         <div className="container mx-auto px-4 py-8">
-          <AdUnit />
+          <InvisibleAdUnit />
         </div>
 
         <TechnicalSpecs />

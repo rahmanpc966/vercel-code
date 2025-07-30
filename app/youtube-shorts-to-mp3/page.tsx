@@ -8,7 +8,7 @@ import Breadcrumb from "@/components/Breadcrumb"
 import OrganizationSchema from "@/components/OrganizationSchema"
 import WebsiteSchema from "@/components/WebsiteSchema"
 import Script from "next/script"
-import AdUnit from "@/components/AdUnit"
+import InvisibleAdUnit from "@/components/InvisibleAdUnit"
 
 export const metadata: Metadata = {
   title: "YouTube Shorts to MP3 Converter | Extract Audio from Shorts",
@@ -44,7 +44,7 @@ export default function YouTubeShortsToMP3Page() {
         </section>
 
         <div className="container mx-auto px-4 py-8">
-          <AdUnit />
+          <InvisibleAdUnit />
         </div>
 
         <section className="py-16 px-4">
@@ -78,7 +78,7 @@ export default function YouTubeShortsToMP3Page() {
         <HowItWorks />
 
         <div className="container mx-auto px-4 py-8">
-          <AdUnit />
+          <InvisibleAdUnit />
         </div>
       </main>
 

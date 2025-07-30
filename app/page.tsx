@@ -10,7 +10,7 @@ import TechnicalSpecs from "@/components/TechnicalSpecs"
 import Footer from "@/components/Footer"
 import Navigation from "@/components/Navigation"
 import Script from "next/script"
-import AdUnit from "@/components/AdUnit"
+import InvisibleAdUnit from "@/components/InvisibleAdUnit"
 import InternalLinkBanner from "@/components/InternalLinkBanner"
 
 export const metadata: Metadata = {
@@ -218,7 +218,7 @@ export default function Home() {
         </section>
 
         <div className="container mx-auto px-4 py-8">
-          <AdUnit />
+          <InvisibleAdUnit />
         </div>
 
         <Features />
@@ -230,7 +230,7 @@ export default function Home() {
         <HowItWorks />
 
         <div className="container mx-auto px-4 py-8">
-          <AdUnit />
+          <InvisibleAdUnit />
         </div>
 
         <TechnicalSpecs />
