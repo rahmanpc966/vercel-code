@@ -1,28 +1,25 @@
 "use client"
 
-import type React from "react"
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { Card } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
 
 interface VisibleAdUnitProps {
   adSlot: string
   adFormat?: "auto" | "rectangle" | "vertical" | "horizontal"
-  adClient?: string
   className?: string
-  style?: React.CSSProperties
   testMode?: boolean
 }
 
 export default function VisibleAdUnit({
   adSlot,
   adFormat = "auto",
-  adClient = "ca-pub-1234567890123456",
   className = "",
-  style = {},
   testMode = false,
 }: VisibleAdUnitProps) {
-  const adRef = useRef<HTMLDivElement>(null)
   const [adStatus, setAdStatus] = useState<"loading" | "loaded" | "failed" | "blocked">("loading")
+  const [adError, setAdError] = useState<string>("")
+  const adRef = useRef<HTMLDivElement>(null)
   const [isVisible, setIsVisible] = useState(false)
 
   useEffect(() => {
@@ -48,29 +45,37 @@ export default function VisibleAdUnit({
 
     const loadAd = async () => {
       try {
-        // Check if AdSense is available
+        // Check if ads are blocked
         if (typeof window !== "undefined") {
-          // Simulate ad loading
-          const adBlockerDetected = !window.navigator.onLine || document.querySelector("[data-ad-client]") === null
+          const testAd = document.createElement("div")
+          testAd.innerHTML = "&nbsp;"
+          testAd.className = "adsbox"
+          testAd.style.position = "absolute"
+          testAd.style.left = "-10000px"
+          document.body.appendChild(testAd)
 
-          if (testMode) {
-            // In test mode, randomly succeed or fail
-            const shouldFail = Math.random() > 0.7
-            setTimeout(() => {
-              setAdStatus(shouldFail ? "failed" : "loaded")
-            }, 1000)
-          } else if (adBlockerDetected) {
-            setAdStatus("blocked")
-          } else {
-            // Try to load the actual ad
-            setTimeout(() => {
-              setAdStatus("loaded")
-            }, 2000)
-          }
+          setTimeout(() => {
+            if (testAd.offsetHeight === 0) {
+              setAdStatus("blocked")
+              setAdError("Ad blocker detected")
+            } else {
+              // Simulate ad loading
+              setTimeout(() => {
+                if (testMode) {
+                  setAdStatus("loaded")
+                } else {
+                  // In real implementation, this would load actual ads
+                  setAdStatus("failed")
+                  setAdError("Ad failed to load")
+                }
+              }, 1000)
+            }
+            document.body.removeChild(testAd)
+          }, 100)
         }
       } catch (error) {
-        console.error("Ad loading error:", error)
         setAdStatus("failed")
+        setAdError("Ad loading error")
       }
     }
 
@@ -80,78 +85,71 @@ export default function VisibleAdUnit({
   const getAdDimensions = () => {
     switch (adFormat) {
       case "rectangle":
-        return { width: "300px", height: "250px" }
+        return "w-80 h-60"
       case "vertical":
-        return { width: "160px", height: "600px" }
+        return "w-40 h-80"
       case "horizontal":
-        return { width: "728px", height: "90px" }
+        return "w-full h-24"
       default:
-        return { width: "100%", height: "250px" }
+        return "w-80 h-60"
     }
   }
 
-  const dimensions = getAdDimensions()
-
-  const renderAdContent = () => {
+  const getStatusColor = () => {
     switch (adStatus) {
       case "loading":
-        return (
-          <div className="flex items-center justify-center h-full bg-gray-100 animate-pulse">
-            <div className="text-gray-500 text-sm">Loading Ad...</div>
-          </div>
-        )
-
+        return "bg-blue-100 text-blue-800"
       case "loaded":
-        return (
-          <div className="flex items-center justify-center h-full bg-green-50 border border-green-200">
-            <div className="text-center">
-              <div className="text-green-600 font-medium">✓ Ad Loaded</div>
-              <div className="text-xs text-gray-500 mt-1">Slot: {adSlot}</div>
-            </div>
-          </div>
-        )
-
+        return "bg-green-100 text-green-800"
       case "failed":
-        return (
-          <div className="flex items-center justify-center h-full bg-red-50 border border-red-200">
-            <div className="text-center">
-              <div className="text-red-600 font-medium">✗ Ad Failed</div>
-              <div className="text-xs text-gray-500 mt-1">Slot: {adSlot}</div>
-            </div>
-          </div>
-        )
-
+        return "bg-red-100 text-red-800"
       case "blocked":
-        return (
-          <div className="flex items-center justify-center h-full bg-yellow-50 border border-yellow-200">
-            <div className="text-center">
-              <div className="text-yellow-600 font-medium">⚠ Ad Blocked</div>
-              <div className="text-xs text-gray-500 mt-1">AdBlocker Detected</div>
-            </div>
-          </div>
-        )
-
+        return "bg-orange-100 text-orange-800"
       default:
-        return null
+        return "bg-gray-100 text-gray-800"
     }
   }
 
   return (
-    <div
-      ref={adRef}
-      className={`ad-unit ${className}`}
-      style={{
-        ...dimensions,
-        ...style,
-        minHeight: dimensions.height,
-        display: "block",
-      }}
-      data-ad-client={adClient}
-      data-ad-slot={adSlot}
-      data-ad-format={adFormat}
-      data-testid="visible-ad-unit"
-    >
-      <Card className="h-full w-full">{renderAdContent()}</Card>
+    <div ref={adRef} className={`${className} ${getAdDimensions()}`}>
+      <Card className="w-full h-full flex flex-col items-center justify-center p-4 border-2 border-dashed">
+        <div className="text-center space-y-2">
+          <Badge className={getStatusColor()}>Ad Status: {adStatus.charAt(0).toUpperCase() + adStatus.slice(1)}</Badge>
+
+          <div className="text-sm text-gray-600">
+            <div>Slot: {adSlot}</div>
+            <div>Format: {adFormat}</div>
+            {adError && <div className="text-red-600 mt-1">Error: {adError}</div>}
+          </div>
+
+          {adStatus === "loading" && (
+            <div className="animate-pulse">
+              <div className="bg-gray-300 h-4 w-24 rounded mx-auto"></div>
+            </div>
+          )}
+
+          {adStatus === "loaded" && (
+            <div className="bg-green-50 p-4 rounded border">
+              <div className="text-green-700 font-medium">✓ Ad Loaded Successfully</div>
+              <div className="text-xs text-green-600 mt-1">This would show the actual ad content</div>
+            </div>
+          )}
+
+          {adStatus === "failed" && (
+            <div className="bg-red-50 p-4 rounded border">
+              <div className="text-red-700 font-medium">✗ Ad Failed</div>
+              <div className="text-xs text-red-600 mt-1">No ad content available</div>
+            </div>
+          )}
+
+          {adStatus === "blocked" && (
+            <div className="bg-orange-50 p-4 rounded border">
+              <div className="text-orange-700 font-medium">🚫 Ad Blocked</div>
+              <div className="text-xs text-orange-600 mt-1">Ad blocker is preventing ads from loading</div>
+            </div>
+          )}
+        </div>
+      </Card>
     </div>
   )
 }
