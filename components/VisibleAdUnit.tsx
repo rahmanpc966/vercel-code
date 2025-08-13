@@ -1,82 +1,88 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { Card } from "@/components/ui/card"
+import type React from "react"
+
+import { useEffect, useState, useRef } from "react"
+import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 
 interface VisibleAdUnitProps {
-  adSlot?: string
-  adSize?: "banner" | "rectangle" | "leaderboard" | "mobile"
+  slot: string
+  size?: "banner" | "rectangle" | "leaderboard" | "mobile"
   className?: string
-  showFallback?: boolean
   testMode?: boolean
 }
 
-export default function VisibleAdUnit({
-  adSlot = "1234567890",
-  adSize = "banner",
-  className = "",
-  showFallback = true,
-  testMode = false,
-}: VisibleAdUnitProps) {
-  const [adStatus, setAdStatus] = useState<"loading" | "loaded" | "failed" | "blocked">("loading")
-  const [isAdBlockerDetected, setIsAdBlockerDetected] = useState(false)
+type AdStatus = "loading" | "loaded" | "failed" | "blocked"
 
-  // Ad size configurations
-  const adSizes = {
-    banner: { width: 728, height: 90, className: "w-full max-w-[728px] h-[90px]" },
-    rectangle: { width: 300, height: 250, className: "w-[300px] h-[250px]" },
-    leaderboard: { width: 970, height: 90, className: "w-full max-w-[970px] h-[90px]" },
-    mobile: { width: 320, height: 50, className: "w-full max-w-[320px] h-[50px]" },
+const VisibleAdUnit: React.FC<VisibleAdUnitProps> = ({ slot, size = "banner", className = "", testMode = false }) => {
+  const [adStatus, setAdStatus] = useState<AdStatus>("loading")
+  const [isAdBlockerDetected, setIsAdBlockerDetected] = useState(false)
+  const adRef = useRef<HTMLDivElement>(null)
+
+  const sizeConfig = {
+    banner: { width: 728, height: 90, class: "w-full max-w-[728px] h-[90px]" },
+    rectangle: { width: 300, height: 250, class: "w-[300px] h-[250px]" },
+    leaderboard: { width: 970, height: 90, class: "w-full max-w-[970px] h-[90px]" },
+    mobile: { width: 320, height: 50, class: "w-full max-w-[320px] h-[50px]" },
   }
 
-  const currentSize = adSizes[adSize]
+  const currentSize = sizeConfig[size]
 
   useEffect(() => {
-    // Simulate ad loading process
-    const loadAd = async () => {
-      try {
-        // Check for ad blocker
-        const adBlockTest = document.createElement("div")
-        adBlockTest.innerHTML = "&nbsp;"
-        adBlockTest.className = "adsbox"
-        document.body.appendChild(adBlockTest)
+    // Detect ad blocker
+    const detectAdBlocker = () => {
+      const testAd = document.createElement("div")
+      testAd.innerHTML = "&nbsp;"
+      testAd.className = "adsbox"
+      testAd.style.position = "absolute"
+      testAd.style.left = "-10000px"
+      document.body.appendChild(testAd)
 
-        setTimeout(() => {
-          const isBlocked = adBlockTest.offsetHeight === 0
-          document.body.removeChild(adBlockTest)
-
-          if (isBlocked) {
-            setIsAdBlockerDetected(true)
-            setAdStatus("blocked")
-          } else {
-            // Simulate ad loading delay
-            setTimeout(
-              () => {
-                if (testMode) {
-                  setAdStatus("loaded")
-                } else {
-                  // In production, this would be determined by actual ad loading
-                  setAdStatus(Math.random() > 0.3 ? "loaded" : "failed")
-                }
-              },
-              1000 + Math.random() * 2000,
-            )
-          }
-        }, 100)
-      } catch (error) {
-        setAdStatus("failed")
-      }
+      setTimeout(() => {
+        if (testAd.offsetHeight === 0) {
+          setIsAdBlockerDetected(true)
+          setAdStatus("blocked")
+        }
+        document.body.removeChild(testAd)
+      }, 100)
     }
 
-    loadAd()
-  }, [testMode])
+    detectAdBlocker()
+
+    // Simulate ad loading in test mode
+    if (testMode) {
+      const timer = setTimeout(() => {
+        const random = Math.random()
+        if (random > 0.7) {
+          setAdStatus("failed")
+        } else if (random > 0.3) {
+          setAdStatus("loaded")
+        } else {
+          setAdStatus("blocked")
+          setIsAdBlockerDetected(true)
+        }
+      }, 2000)
+
+      return () => clearTimeout(timer)
+    }
+
+    // Real ad loading logic would go here
+    // For now, simulate loading
+    const timer = setTimeout(() => {
+      if (!isAdBlockerDetected) {
+        setAdStatus("loaded")
+      }
+    }, 1500)
+
+    return () => clearTimeout(timer)
+  }, [testMode, isAdBlockerDetected])
 
   const getStatusBadge = () => {
     const badges = {
       loading: (
         <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">
-          Loading...
+          Loading
         </Badge>
       ),
       loaded: (
@@ -84,11 +90,7 @@ export default function VisibleAdUnit({
           Ad Loaded
         </Badge>
       ),
-      failed: (
-        <Badge variant="secondary" className="bg-red-100 text-red-800">
-          Ad Failed
-        </Badge>
-      ),
+      failed: <Badge variant="destructive">Ad Failed</Badge>,
       blocked: (
         <Badge variant="secondary" className="bg-orange-100 text-orange-800">
           Ad Blocked
@@ -99,20 +101,21 @@ export default function VisibleAdUnit({
   }
 
   const getFallbackContent = () => {
-    if (adStatus === "blocked" && isAdBlockerDetected) {
+    if (adStatus === "loading") {
       return (
-        <div className="text-center p-6 bg-orange-50 border border-orange-200 rounded-lg">
-          <div className="text-orange-600 mb-2">
-            <svg className="w-8 h-8 mx-auto mb-2" fill="currentColor" viewBox="0 0 20 20">
-              <path
-                fillRule="evenodd"
-                d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
-                clipRule="evenodd"
-              />
-            </svg>
-          </div>
-          <h3 className="font-semibold text-orange-800 mb-1">Ad Blocker Detected</h3>
-          <p className="text-sm text-orange-600">
+        <div className="flex items-center justify-center h-full">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+          <span className="ml-2 text-gray-600">Loading advertisement...</span>
+        </div>
+      )
+    }
+
+    if (adStatus === "blocked") {
+      return (
+        <div className="text-center p-4">
+          <div className="text-4xl mb-2">🚫</div>
+          <h3 className="font-semibold text-gray-700 mb-2">Ad Blocked</h3>
+          <p className="text-sm text-gray-500">
             Please consider disabling your ad blocker to support our free service.
           </p>
         </div>
@@ -121,17 +124,9 @@ export default function VisibleAdUnit({
 
     if (adStatus === "failed") {
       return (
-        <div className="text-center p-6 bg-gray-50 border border-gray-200 rounded-lg">
-          <div className="text-gray-400 mb-2">
-            <svg className="w-8 h-8 mx-auto mb-2" fill="currentColor" viewBox="0 0 20 20">
-              <path
-                fillRule="evenodd"
-                d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
-                clipRule="evenodd"
-              />
-            </svg>
-          </div>
-          <h3 className="font-semibold text-gray-600 mb-1">Advertisement</h3>
+        <div className="text-center p-4">
+          <div className="text-4xl mb-2">📢</div>
+          <h3 className="font-semibold text-gray-700 mb-2">Advertisement</h3>
           <p className="text-sm text-gray-500">
             This space is reserved for advertisements to support our free service.
           </p>
@@ -139,60 +134,29 @@ export default function VisibleAdUnit({
       )
     }
 
-    return null
+    // Ad loaded successfully
+    return (
+      <div className="text-center p-4">
+        <div className="text-4xl mb-2">✅</div>
+        <h3 className="font-semibold text-gray-700 mb-2">Ad Space</h3>
+        <p className="text-sm text-gray-500">Advertisement would appear here</p>
+      </div>
+    )
   }
 
   return (
     <div className={`relative ${className}`}>
-      <Card className={`${currentSize.className} mx-auto relative overflow-hidden`}>
-        {/* Status Badge */}
-        <div className="absolute top-2 right-2 z-10">{getStatusBadge()}</div>
+      <div className="absolute top-2 right-2 z-10">{getStatusBadge()}</div>
 
-        {/* Ad Content Area */}
-        <div className="w-full h-full flex items-center justify-center bg-gray-50">
-          {adStatus === "loading" && (
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
-              <p className="text-sm text-gray-500">Loading advertisement...</p>
-            </div>
-          )}
-
-          {adStatus === "loaded" && !testMode && (
-            <div className="w-full h-full">
-              {/* This is where the actual ad would be inserted */}
-              <div
-                id={`ad-${adSlot}`}
-                className="w-full h-full"
-                data-ad-slot={adSlot}
-                data-ad-size={`${currentSize.width}x${currentSize.height}`}
-              >
-                {/* Placeholder for actual ad content */}
-                <div className="w-full h-full bg-gradient-to-r from-blue-100 to-purple-100 flex items-center justify-center">
-                  <div className="text-center">
-                    <div className="text-2xl mb-2">📢</div>
-                    <p className="text-sm font-medium text-gray-700">Advertisement Space</p>
-                    <p className="text-xs text-gray-500">Ad Slot: {adSlot}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {adStatus === "loaded" && testMode && (
-            <div className="w-full h-full bg-green-100 flex items-center justify-center">
-              <div className="text-center">
-                <div className="text-2xl mb-2">✅</div>
-                <p className="text-sm font-medium text-green-700">Test Ad - Working!</p>
-                <p className="text-xs text-green-600">
-                  Size: {adSize} ({currentSize.width}x{currentSize.height})
-                </p>
-              </div>
-            </div>
-          )}
-
-          {(adStatus === "failed" || adStatus === "blocked") && showFallback && getFallbackContent()}
-        </div>
+      <Card className={`${currentSize.class} border-2 border-dashed border-gray-300 bg-gray-50`}>
+        <CardContent className="p-0 h-full flex items-center justify-center">
+          <div ref={adRef} className="w-full h-full flex items-center justify-center" data-ad-slot={slot}>
+            {getFallbackContent()}
+          </div>
+        </CardContent>
       </Card>
     </div>
   )
 }
+
+export default VisibleAdUnit
