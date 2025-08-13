@@ -200,8 +200,8 @@ export default function Home() {
         {/* Hero Section */}
         <section className="px-4 py-16 bg-[#0066FF] text-white text-center">
           <div className="max-w-7xl mx-auto">
-            <h1 className="text-4xl md:text-6xl font-bold mb-4">
-              🎵 #1 YouTube to MP3 Converter | Free HD Audio Extraction
+            <h1 className="text-4xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              YouTube to MP3 Converter
             </h1>
             <p className="text-xl mb-8 text-white max-w-3xl mx-auto">
               Convert your favorite YouTube videos and Shorts to high-quality MP3 files instantly.

@@ -1,5 +1,3 @@
-import type { FC } from "react"
-
 interface BreadcrumbItem {
   name: string
   url: string
@@ -9,8 +7,8 @@ interface BreadcrumbSchemaProps {
   items?: BreadcrumbItem[]
 }
 
-const BreadcrumbSchema: FC<BreadcrumbSchemaProps> = ({ items = [] }) => {
-  // Don't render if no items or empty array
+export default function BreadcrumbSchema({ items = [] }: BreadcrumbSchemaProps) {
+  // Don't render anything if no items provided
   if (!items || items.length === 0) {
     return null
   }
@@ -35,5 +33,3 @@ const BreadcrumbSchema: FC<BreadcrumbSchemaProps> = ({ items = [] }) => {
     />
   )
 }
-
-export default BreadcrumbSchema
