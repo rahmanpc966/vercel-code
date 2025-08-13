@@ -10,7 +10,7 @@ import TechnicalSpecs from "@/components/TechnicalSpecs"
 import Footer from "@/components/Footer"
 import Navigation from "@/components/Navigation"
 import Script from "next/script"
-import InvisibleAdUnit from "@/components/InvisibleAdUnit"
+import VisibleAdUnit from "@/components/VisibleAdUnit"
 import InternalLinkBanner from "@/components/InternalLinkBanner"
 
 export const metadata: Metadata = {
@@ -217,8 +217,9 @@ export default function Home() {
           </div>
         </section>
 
+        {/* First Ad Placement - Banner after hero */}
         <div className="container mx-auto px-4 py-8">
-          <InvisibleAdUnit />
+          <VisibleAdUnit size="leaderboard" showFallback={true} className="mb-4" />
         </div>
 
         <Features />
@@ -229,12 +230,19 @@ export default function Home() {
 
         <HowItWorks />
 
+        {/* Second Ad Placement - Rectangle in middle content */}
         <div className="container mx-auto px-4 py-8">
-          <InvisibleAdUnit />
+          <VisibleAdUnit size="rectangle" showFallback={true} className="mb-8" />
         </div>
 
         <TechnicalSpecs />
         <AdvancedSEOContent />
+
+        {/* Third Ad Placement - Banner before FAQ */}
+        <div className="container mx-auto px-4 py-6">
+          <VisibleAdUnit size="banner" showFallback={true} className="mb-6" />
+        </div>
+
         <FAQ />
         <EnhancedFAQ />
         <AboutSection />
