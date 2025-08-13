@@ -8,7 +8,7 @@ interface BreadcrumbSchemaProps {
 }
 
 export default function BreadcrumbSchema({ items = [] }: BreadcrumbSchemaProps) {
-  // Don't render anything if no items provided
+  // Don't render if no items
   if (!items || items.length === 0) {
     return null
   }

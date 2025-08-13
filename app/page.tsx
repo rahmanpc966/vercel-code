@@ -15,6 +15,7 @@ import InternalLinkBanner from "@/components/InternalLinkBanner"
 import OrganizationSchema from "@/components/OrganizationSchema"
 import WebsiteSchema from "@/components/WebsiteSchema"
 import ArticleSchema from "@/components/ArticleSchema"
+import RelatedContent from "@/components/RelatedContent"
 
 export const metadata: Metadata = {
   title: "YT2MP3 - #1 YouTube to MP3 Converter | Free HD Audio Extraction 2024",
@@ -261,6 +262,7 @@ export default function Home() {
         <FAQ />
         <EnhancedFAQ />
         <AboutSection />
+        <RelatedContent />
       </main>
 
       <Footer />
