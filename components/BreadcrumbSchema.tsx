@@ -1,34 +1,35 @@
-import Script from "next/script"
+interface BreadcrumbItem {
+  name: string
+  url: string
+}
 
 interface BreadcrumbSchemaProps {
-  items?: {
-    name: string
-    url: string
-  }[]
+  items?: BreadcrumbItem[]
 }
 
 export default function BreadcrumbSchema({ items = [] }: BreadcrumbSchemaProps) {
-  // Don't render anything if no items are provided
+  // Don't render anything if no items provided
   if (!items || items.length === 0) {
     return null
   }
 
-  const breadcrumbList = items.map((item, index) => ({
-    "@type": "ListItem",
-    position: index + 1,
-    name: item.name,
-    item: item.url,
-  }))
-
-  const schema = {
+  const breadcrumbSchema = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
-    itemListElement: breadcrumbList,
+    itemListElement: items.map((item, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: item.name,
+      item: item.url,
+    })),
   }
 
   return (
-    <Script id="breadcrumb-schema" type="application/ld+json" strategy="afterInteractive">
-      {JSON.stringify(schema)}
-    </Script>
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{
+        __html: JSON.stringify(breadcrumbSchema),
+      }}
+    />
   )
 }
