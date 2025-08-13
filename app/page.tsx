@@ -12,6 +12,9 @@ import Navigation from "@/components/Navigation"
 import Script from "next/script"
 import VisibleAdUnit from "@/components/VisibleAdUnit"
 import InternalLinkBanner from "@/components/InternalLinkBanner"
+import OrganizationSchema from "@/components/OrganizationSchema"
+import WebsiteSchema from "@/components/WebsiteSchema"
+import ArticleSchema from "@/components/ArticleSchema"
 
 export const metadata: Metadata = {
   title: "YT2MP3 - #1 YouTube to MP3 Converter | Free HD Audio Extraction 2024",
@@ -177,6 +180,18 @@ const structuredData = {
 export default function Home() {
   return (
     <div className="min-h-screen flex flex-col">
+      {/* Schema Components - Only include relevant ones for homepage */}
+      <OrganizationSchema />
+      <WebsiteSchema />
+      <ArticleSchema
+        headline="Free YouTube to MP3 Converter - YT2MP3"
+        description="Convert your favorite YouTube videos to high-quality MP3 files for free. Fast, secure, and easy to use YouTube to MP3 converter."
+        datePublished="2024-01-01"
+        dateModified={new Date().toISOString()}
+        authorName="YT2MP3 Team"
+        url="https://yt2mate.pro"
+      />
+
       <header className="bg-[#0066FF]">
         <Navigation />
       </header>
@@ -219,7 +234,7 @@ export default function Home() {
 
         {/* First Ad Placement - Banner after hero */}
         <div className="container mx-auto px-4 py-8">
-          <VisibleAdUnit size="leaderboard" showFallback={true} className="mb-4" />
+          <VisibleAdUnit adSlot="1234567890" adSize="leaderboard" showFallback={true} className="mb-4" />
         </div>
 
         <Features />
@@ -232,7 +247,7 @@ export default function Home() {
 
         {/* Second Ad Placement - Rectangle in middle content */}
         <div className="container mx-auto px-4 py-8">
-          <VisibleAdUnit size="rectangle" showFallback={true} className="mb-8" />
+          <VisibleAdUnit adSlot="0987654321" adSize="rectangle" showFallback={true} className="mb-8" />
         </div>
 
         <TechnicalSpecs />
@@ -240,7 +255,7 @@ export default function Home() {
 
         {/* Third Ad Placement - Banner before FAQ */}
         <div className="container mx-auto px-4 py-6">
-          <VisibleAdUnit size="banner" showFallback={true} className="mb-6" />
+          <VisibleAdUnit adSlot="1122334455" adSize="banner" showFallback={true} className="mb-6" />
         </div>
 
         <FAQ />

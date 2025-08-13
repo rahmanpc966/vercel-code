@@ -1,184 +1,197 @@
 "use client"
 
-import { useEffect, useState, useRef } from "react"
-import { Card, CardContent } from "@/components/ui/card"
+import { useEffect, useState } from "react"
+import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 
 interface VisibleAdUnitProps {
+  adSlot?: string
+  adSize?: "banner" | "rectangle" | "leaderboard" | "mobile"
+  className?: string
   showFallback?: boolean
   testMode?: boolean
-  className?: string
-  size?: "banner" | "rectangle" | "leaderboard" | "mobile"
 }
 
 export default function VisibleAdUnit({
+  adSlot = "1234567890",
+  adSize = "banner",
+  className = "",
   showFallback = true,
   testMode = false,
-  className = "",
-  size = "banner",
 }: VisibleAdUnitProps) {
   const [adStatus, setAdStatus] = useState<"loading" | "loaded" | "failed" | "blocked">("loading")
-  const [adBlockerDetected, setAdBlockerDetected] = useState(false)
-  const adRef = useRef<HTMLDivElement>(null)
-  const timeoutRef = useRef<NodeJS.Timeout>()
+  const [isAdBlockerDetected, setIsAdBlockerDetected] = useState(false)
 
-  const sizeConfig = {
-    banner: { width: "728px", height: "90px", class: "w-full max-w-3xl h-24" },
-    rectangle: { width: "300px", height: "250px", class: "w-80 h-64" },
-    leaderboard: { width: "970px", height: "90px", class: "w-full max-w-5xl h-24" },
-    mobile: { width: "320px", height: "50px", class: "w-full max-w-sm h-14" },
+  // Ad size configurations
+  const adSizes = {
+    banner: { width: 728, height: 90, className: "w-full max-w-[728px] h-[90px]" },
+    rectangle: { width: 300, height: 250, className: "w-[300px] h-[250px]" },
+    leaderboard: { width: 970, height: 90, className: "w-full max-w-[970px] h-[90px]" },
+    mobile: { width: 320, height: 50, className: "w-full max-w-[320px] h-[50px]" },
   }
 
-  const currentSize = sizeConfig[size]
+  const currentSize = adSizes[adSize]
 
   useEffect(() => {
-    // Detect ad blocker
-    const detectAdBlocker = () => {
-      const testAd = document.createElement("div")
-      testAd.innerHTML = "&nbsp;"
-      testAd.className = "adsbox"
-      testAd.style.position = "absolute"
-      testAd.style.left = "-10000px"
-      document.body.appendChild(testAd)
+    // Simulate ad loading process
+    const loadAd = async () => {
+      try {
+        // Check for ad blocker
+        const adBlockTest = document.createElement("div")
+        adBlockTest.innerHTML = "&nbsp;"
+        adBlockTest.className = "adsbox"
+        document.body.appendChild(adBlockTest)
 
-      setTimeout(() => {
-        if (testAd.offsetHeight === 0) {
-          setAdBlockerDetected(true)
-          setAdStatus("blocked")
-        }
-        document.body.removeChild(testAd)
-      }, 100)
-    }
+        setTimeout(() => {
+          const isBlocked = adBlockTest.offsetHeight === 0
+          document.body.removeChild(adBlockTest)
 
-    detectAdBlocker()
-
-    // Simulate ad loading in test mode
-    if (testMode) {
-      timeoutRef.current = setTimeout(() => {
-        setAdStatus(Math.random() > 0.3 ? "loaded" : "failed")
-      }, 2000)
-    } else {
-      // Real ad loading logic would go here
-      // For now, we'll simulate based on ad blocker detection
-      timeoutRef.current = setTimeout(() => {
-        if (!adBlockerDetected) {
-          // Try to load real ads here
-          setAdStatus("loaded") // This would be set by actual ad loading
-        } else {
-          setAdStatus("blocked")
-        }
-      }, 3000)
-    }
-
-    return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current)
+          if (isBlocked) {
+            setIsAdBlockerDetected(true)
+            setAdStatus("blocked")
+          } else {
+            // Simulate ad loading delay
+            setTimeout(
+              () => {
+                if (testMode) {
+                  setAdStatus("loaded")
+                } else {
+                  // In production, this would be determined by actual ad loading
+                  setAdStatus(Math.random() > 0.3 ? "loaded" : "failed")
+                }
+              },
+              1000 + Math.random() * 2000,
+            )
+          }
+        }, 100)
+      } catch (error) {
+        setAdStatus("failed")
       }
     }
-  }, [testMode, adBlockerDetected])
 
-  const getStatusColor = () => {
-    switch (adStatus) {
-      case "loading":
-        return "bg-yellow-500"
-      case "loaded":
-        return "bg-green-500"
-      case "failed":
-        return "bg-red-500"
-      case "blocked":
-        return "bg-orange-500"
-      default:
-        return "bg-gray-500"
+    loadAd()
+  }, [testMode])
+
+  const getStatusBadge = () => {
+    const badges = {
+      loading: (
+        <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">
+          Loading...
+        </Badge>
+      ),
+      loaded: (
+        <Badge variant="secondary" className="bg-green-100 text-green-800">
+          Ad Loaded
+        </Badge>
+      ),
+      failed: (
+        <Badge variant="secondary" className="bg-red-100 text-red-800">
+          Ad Failed
+        </Badge>
+      ),
+      blocked: (
+        <Badge variant="secondary" className="bg-orange-100 text-orange-800">
+          Ad Blocked
+        </Badge>
+      ),
     }
+    return badges[adStatus]
   }
 
-  const getStatusText = () => {
-    switch (adStatus) {
-      case "loading":
-        return "Loading Ad..."
-      case "loaded":
-        return "Ad Loaded"
-      case "failed":
-        return "Ad Failed"
-      case "blocked":
-        return "Ad Blocked"
-      default:
-        return "Unknown"
-    }
-  }
-
-  if (adStatus === "loaded" && !testMode) {
-    // This is where the actual ad would be rendered
-    return (
-      <div className={`flex justify-center ${className}`}>
-        <div
-          ref={adRef}
-          className={`${currentSize.class} bg-gray-100 border border-gray-200 rounded-lg flex items-center justify-center`}
-          style={{ minWidth: currentSize.width, minHeight: currentSize.height }}
-        >
-          {/* Real ad content would be injected here by ad network */}
-          <div className="text-center p-4">
-            <div className="text-sm text-gray-600 mb-2">Advertisement</div>
-            <div className="w-full h-16 bg-gradient-to-r from-blue-400 to-purple-500 rounded flex items-center justify-center text-white font-semibold">
-              Your Ad Here
-            </div>
+  const getFallbackContent = () => {
+    if (adStatus === "blocked" && isAdBlockerDetected) {
+      return (
+        <div className="text-center p-6 bg-orange-50 border border-orange-200 rounded-lg">
+          <div className="text-orange-600 mb-2">
+            <svg className="w-8 h-8 mx-auto mb-2" fill="currentColor" viewBox="0 0 20 20">
+              <path
+                fillRule="evenodd"
+                d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                clipRule="evenodd"
+              />
+            </svg>
           </div>
+          <h3 className="font-semibold text-orange-800 mb-1">Ad Blocker Detected</h3>
+          <p className="text-sm text-orange-600">
+            Please consider disabling your ad blocker to support our free service.
+          </p>
         </div>
-      </div>
-    )
-  }
+      )
+    }
 
-  if (!showFallback && adStatus !== "loaded") {
+    if (adStatus === "failed") {
+      return (
+        <div className="text-center p-6 bg-gray-50 border border-gray-200 rounded-lg">
+          <div className="text-gray-400 mb-2">
+            <svg className="w-8 h-8 mx-auto mb-2" fill="currentColor" viewBox="0 0 20 20">
+              <path
+                fillRule="evenodd"
+                d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
+                clipRule="evenodd"
+              />
+            </svg>
+          </div>
+          <h3 className="font-semibold text-gray-600 mb-1">Advertisement</h3>
+          <p className="text-sm text-gray-500">
+            This space is reserved for advertisements to support our free service.
+          </p>
+        </div>
+      )
+    }
+
     return null
   }
 
   return (
-    <div className={`flex justify-center ${className}`}>
-      <Card className={`${currentSize.class} border-dashed border-2`}>
-        <CardContent className="p-4 h-full flex flex-col items-center justify-center text-center">
-          <div className="flex items-center gap-2 mb-3">
-            <Badge variant="outline" className={`${getStatusColor()} text-white border-0`}>
-              {getStatusText()}
-            </Badge>
-          </div>
+    <div className={`relative ${className}`}>
+      <Card className={`${currentSize.className} mx-auto relative overflow-hidden`}>
+        {/* Status Badge */}
+        <div className="absolute top-2 right-2 z-10">{getStatusBadge()}</div>
 
+        {/* Ad Content Area */}
+        <div className="w-full h-full flex items-center justify-center bg-gray-50">
           {adStatus === "loading" && (
-            <div className="space-y-2">
-              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mx-auto"></div>
-              <p className="text-sm text-gray-600">Loading advertisement...</p>
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
+              <p className="text-sm text-gray-500">Loading advertisement...</p>
             </div>
           )}
 
-          {adStatus === "blocked" && (
-            <div className="space-y-2">
-              <div className="text-orange-500 text-2xl">🚫</div>
-              <p className="text-sm text-gray-600">Ad blocked by browser</p>
-              <p className="text-xs text-gray-500">Please consider disabling your ad blocker to support us</p>
-            </div>
-          )}
-
-          {adStatus === "failed" && (
-            <div className="space-y-2">
-              <div className="text-red-500 text-2xl">❌</div>
-              <p className="text-sm text-gray-600">Advertisement failed to load</p>
-              <p className="text-xs text-gray-500">Please refresh the page or try again later</p>
-            </div>
-          )}
-
-          {testMode && adStatus === "loaded" && (
-            <div className="space-y-2">
-              <div className="text-green-500 text-2xl">✅</div>
-              <p className="text-sm text-gray-600">Test ad loaded successfully</p>
-              <div className="w-full h-12 bg-gradient-to-r from-green-400 to-blue-500 rounded flex items-center justify-center text-white text-sm font-medium">
-                Sample Advertisement
+          {adStatus === "loaded" && !testMode && (
+            <div className="w-full h-full">
+              {/* This is where the actual ad would be inserted */}
+              <div
+                id={`ad-${adSlot}`}
+                className="w-full h-full"
+                data-ad-slot={adSlot}
+                data-ad-size={`${currentSize.width}x${currentSize.height}`}
+              >
+                {/* Placeholder for actual ad content */}
+                <div className="w-full h-full bg-gradient-to-r from-blue-100 to-purple-100 flex items-center justify-center">
+                  <div className="text-center">
+                    <div className="text-2xl mb-2">📢</div>
+                    <p className="text-sm font-medium text-gray-700">Advertisement Space</p>
+                    <p className="text-xs text-gray-500">Ad Slot: {adSlot}</p>
+                  </div>
+                </div>
               </div>
             </div>
           )}
 
-          <div className="mt-2 text-xs text-gray-400">
-            Ad Space ({currentSize.width} × {currentSize.height})
-          </div>
-        </CardContent>
+          {adStatus === "loaded" && testMode && (
+            <div className="w-full h-full bg-green-100 flex items-center justify-center">
+              <div className="text-center">
+                <div className="text-2xl mb-2">✅</div>
+                <p className="text-sm font-medium text-green-700">Test Ad - Working!</p>
+                <p className="text-xs text-green-600">
+                  Size: {adSize} ({currentSize.width}x{currentSize.height})
+                </p>
+              </div>
+            </div>
+          )}
+
+          {(adStatus === "failed" || adStatus === "blocked") && showFallback && getFallbackContent()}
+        </div>
       </Card>
     </div>
   )
