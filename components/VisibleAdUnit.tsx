@@ -1,155 +1,157 @@
 "use client"
 
-import { useEffect, useState, useRef } from "react"
-import { Card } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
+import { useEffect, useRef, useState } from "react"
 
 interface VisibleAdUnitProps {
   adSlot: string
-  adFormat?: "auto" | "rectangle" | "vertical" | "horizontal"
+  adFormat?: "auto" | "fluid" | "rectangle" | "vertical" | "horizontal"
+  fullWidthResponsive?: boolean
   className?: string
-  testMode?: boolean
 }
 
 export default function VisibleAdUnit({
   adSlot,
   adFormat = "auto",
+  fullWidthResponsive = true,
   className = "",
-  testMode = false,
 }: VisibleAdUnitProps) {
-  const [adStatus, setAdStatus] = useState<"loading" | "loaded" | "failed" | "blocked">("loading")
-  const [adError, setAdError] = useState<string>("")
   const adRef = useRef<HTMLDivElement>(null)
+  const [adStatus, setAdStatus] = useState<"loading" | "loaded" | "failed" | "blocked">("loading")
   const [isVisible, setIsVisible] = useState(false)
+  const [adInitialized, setAdInitialized] = useState(false)
+  const adIdRef = useRef(`ad-${Math.random().toString(36).substr(2, 9)}`)
 
+  // Check if ad blocker is present
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true)
-          observer.disconnect()
+    const checkAdBlocker = () => {
+      const testAd = document.createElement("div")
+      testAd.innerHTML = "&nbsp;"
+      testAd.className = "adsbox ad-placement ad-placeholder"
+      testAd.style.cssText = "width: 1px; height: 1px; position: absolute; left: -9999px;"
+      document.body.appendChild(testAd)
+
+      setTimeout(() => {
+        const isBlocked = testAd.offsetHeight === 0 || !testAd.offsetParent
+        document.body.removeChild(testAd)
+
+        if (isBlocked) {
+          setAdStatus("blocked")
         }
+      }, 100)
+    }
+
+    checkAdBlocker()
+  }, [])
+
+  // Intersection Observer to detect when ad is visible
+  useEffect(() => {
+    if (!adRef.current) return
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && !isVisible) {
+            setIsVisible(true)
+          }
+        })
       },
       { threshold: 0.1 },
     )
 
-    if (adRef.current) {
-      observer.observe(adRef.current)
+    observer.observe(adRef.current)
+
+    return () => {
+      if (adRef.current) {
+        observer.unobserve(adRef.current)
+      }
     }
+  }, [isVisible])
 
-    return () => observer.disconnect()
-  }, [])
-
+  // Initialize ad when visible
   useEffect(() => {
-    if (!isVisible) return
+    if (!isVisible || adInitialized || adStatus === "blocked") return
 
-    const loadAd = async () => {
+    const initializeAd = () => {
       try {
-        // Check if ads are blocked
-        if (typeof window !== "undefined") {
-          const testAd = document.createElement("div")
-          testAd.innerHTML = "&nbsp;"
-          testAd.className = "adsbox"
-          testAd.style.position = "absolute"
-          testAd.style.left = "-10000px"
-          document.body.appendChild(testAd)
+        const adElement = document.getElementById(adIdRef.current)
+        if (!adElement) {
+          console.error("Ad element not found")
+          setAdStatus("failed")
+          return
+        }
 
+        // Check if adsbygoogle is available
+        if (typeof window !== "undefined" && (window as any).adsbygoogle) {
+          // Small delay to ensure DOM is ready
           setTimeout(() => {
-            if (testAd.offsetHeight === 0) {
-              setAdStatus("blocked")
-              setAdError("Ad blocker detected")
-            } else {
-              // Simulate ad loading
-              setTimeout(() => {
-                if (testMode) {
-                  setAdStatus("loaded")
-                } else {
-                  // In real implementation, this would load actual ads
-                  setAdStatus("failed")
-                  setAdError("Ad failed to load")
-                }
-              }, 1000)
+            try {
+              ;((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({})
+              setAdInitialized(true)
+              setAdStatus("loaded")
+              console.log("Ad initialized successfully:", adIdRef.current)
+            } catch (error) {
+              console.error("Error pushing to adsbygoogle:", error)
+              setAdStatus("failed")
             }
-            document.body.removeChild(testAd)
           }, 100)
+        } else {
+          console.error("adsbygoogle not available")
+          setAdStatus("failed")
         }
       } catch (error) {
+        console.error("Error initializing ad:", error)
         setAdStatus("failed")
-        setAdError("Ad loading error")
       }
     }
 
-    loadAd()
-  }, [isVisible, testMode])
+    initializeAd()
+  }, [isVisible, adInitialized, adStatus])
 
-  const getAdDimensions = () => {
-    switch (adFormat) {
-      case "rectangle":
-        return "w-80 h-60"
-      case "vertical":
-        return "w-40 h-80"
-      case "horizontal":
-        return "w-full h-24"
-      default:
-        return "w-80 h-60"
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      const adElement = document.getElementById(adIdRef.current)
+      if (adElement) {
+        adElement.innerHTML = ""
+      }
     }
-  }
-
-  const getStatusColor = () => {
-    switch (adStatus) {
-      case "loading":
-        return "bg-blue-100 text-blue-800"
-      case "loaded":
-        return "bg-green-100 text-green-800"
-      case "failed":
-        return "bg-red-100 text-red-800"
-      case "blocked":
-        return "bg-orange-100 text-orange-800"
-      default:
-        return "bg-gray-100 text-gray-800"
-    }
-  }
+  }, [])
 
   return (
-    <div ref={adRef} className={`${className} ${getAdDimensions()}`}>
-      <Card className="w-full h-full flex flex-col items-center justify-center p-4 border-2 border-dashed">
-        <div className="text-center space-y-2">
-          <Badge className={getStatusColor()}>Ad Status: {adStatus.charAt(0).toUpperCase() + adStatus.slice(1)}</Badge>
-
-          <div className="text-sm text-gray-600">
-            <div>Slot: {adSlot}</div>
-            <div>Format: {adFormat}</div>
-            {adError && <div className="text-red-600 mt-1">Error: {adError}</div>}
+    <div ref={adRef} className={`ad-container ${className}`}>
+      {adStatus === "loading" && (
+        <div className="flex items-center justify-center p-8 bg-gray-100 rounded">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
+            <p className="text-sm text-gray-600">Loading ad...</p>
           </div>
-
-          {adStatus === "loading" && (
-            <div className="animate-pulse">
-              <div className="bg-gray-300 h-4 w-24 rounded mx-auto"></div>
-            </div>
-          )}
-
-          {adStatus === "loaded" && (
-            <div className="bg-green-50 p-4 rounded border">
-              <div className="text-green-700 font-medium">✓ Ad Loaded Successfully</div>
-              <div className="text-xs text-green-600 mt-1">This would show the actual ad content</div>
-            </div>
-          )}
-
-          {adStatus === "failed" && (
-            <div className="bg-red-50 p-4 rounded border">
-              <div className="text-red-700 font-medium">✗ Ad Failed</div>
-              <div className="text-xs text-red-600 mt-1">No ad content available</div>
-            </div>
-          )}
-
-          {adStatus === "blocked" && (
-            <div className="bg-orange-50 p-4 rounded border">
-              <div className="text-orange-700 font-medium">🚫 Ad Blocked</div>
-              <div className="text-xs text-orange-600 mt-1">Ad blocker is preventing ads from loading</div>
-            </div>
-          )}
         </div>
-      </Card>
+      )}
+
+      {adStatus === "blocked" && (
+        <div className="p-6 bg-yellow-50 border border-yellow-200 rounded text-center">
+          <p className="text-sm text-yellow-800 font-medium mb-2">Ad Blocked</p>
+          <p className="text-xs text-yellow-700">Please disable your ad blocker to support this free service</p>
+        </div>
+      )}
+
+      {adStatus === "failed" && (
+        <div className="p-6 bg-red-50 border border-red-200 rounded text-center">
+          <p className="text-sm text-red-800 font-medium">Ad Failed to Load</p>
+        </div>
+      )}
+
+      {isVisible && adStatus !== "blocked" && (
+        <ins
+          id={adIdRef.current}
+          className="adsbygoogle"
+          style={{ display: "block" }}
+          data-ad-client="ca-pub-8495407505234893"
+          data-ad-slot={adSlot}
+          data-ad-format={adFormat}
+          data-full-width-responsive={fullWidthResponsive.toString()}
+        />
+      )}
     </div>
   )
 }

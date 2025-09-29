@@ -1,9 +1,7 @@
 import type { Metadata } from "next"
 import Navigation from "@/components/Navigation"
 import Footer from "@/components/Footer"
-import dynamic from "next/dynamic"
-
-const AdVerification = dynamic(() => import("@/components/AdVerification"), { ssr: false })
+import AdVerificationClient from "./ad-verification-client"
 
 export const metadata: Metadata = {
   title: "Ad Verification - YT2MP3",
@@ -33,7 +31,7 @@ export default function AdVerificationPage() {
           </ul>
         </div>
 
-        <AdVerification />
+        <AdVerificationClient />
       </main>
 
       <Footer />

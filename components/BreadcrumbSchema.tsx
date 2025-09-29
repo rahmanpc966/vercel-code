@@ -6,16 +6,15 @@ interface BreadcrumbItem {
 }
 
 interface BreadcrumbSchemaProps {
-  items?: BreadcrumbItem[]
+  items: BreadcrumbItem[]
 }
 
-export default function BreadcrumbSchema({ items = [] }: BreadcrumbSchemaProps) {
-  // Don't render if no items provided
+export default function BreadcrumbSchema({ items }: BreadcrumbSchemaProps) {
   if (!items || items.length === 0) {
     return null
   }
 
-  const breadcrumbSchema = {
+  const schema = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: items.map((item, index) => ({
@@ -26,12 +25,5 @@ export default function BreadcrumbSchema({ items = [] }: BreadcrumbSchemaProps) 
     })),
   }
 
-  return (
-    <script
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{
-        __html: JSON.stringify(breadcrumbSchema),
-      }}
-    />
-  )
+  return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
 }
