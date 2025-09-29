@@ -16,6 +16,12 @@ export default function CSSDiagnosticPage() {
         return
       }
 
+      // Additional safety check
+      if (!window || !document) {
+        setDiagnostics({ error: 'Browser APIs not available' })
+        return
+      }
+
       // Check CSS files
       const cssLinks = Array.from(document.querySelectorAll('link[rel="stylesheet"]'))
       results.cssFiles = cssLinks.map(link => ({

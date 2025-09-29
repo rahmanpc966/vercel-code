@@ -10,6 +10,12 @@ export default function DebugStylingPage() {
   useEffect(() => {
     // Check if CSS is loaded
     const checkCSS = () => {
+      // Safety check for browser environment
+      if (typeof window === 'undefined' || !document) {
+        setErrors(prev => [...prev, 'Browser APIs not available during SSR'])
+        return
+      }
+
       const testElement = document.createElement('div')
       testElement.className = 'bg-blue-500'
       testElement.style.position = 'absolute'

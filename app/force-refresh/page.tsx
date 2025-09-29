@@ -5,7 +5,7 @@ import { useEffect } from "react"
 export default function ForceRefreshPage() {
   useEffect(() => {
     // Force a hard refresh to clear cache
-    if (typeof window !== 'undefined') {
+    if (typeof window !== 'undefined' && document) {
       // Clear any cached CSS
       const links = document.querySelectorAll('link[rel="stylesheet"]')
       links.forEach(link => {
