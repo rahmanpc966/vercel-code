@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+# Verification file
+Allow: /979d254e104f4903b5ae619957556785.txt
+
+Sitemap: https://yt2mate.pro/sitemap.xml
