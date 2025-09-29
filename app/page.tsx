@@ -36,41 +36,39 @@ export default function DomainForSale() {
     setSubmitStatus('')
 
     try {
-      // Create email content
-      const emailContent = `
-Domain Inquiry for yt2mate.pro
-
-Name: ${formData.name}
-Email: ${formData.email}
-Offer: ${formData.offer || 'Not specified'}
-Message: ${formData.message}
-
-This inquiry was sent from the domain sale page.
-      `.trim()
-
-      // Create mailto link
-      const mailtoLink = `mailto:teamlumina66@gmail.com?subject=Domain Inquiry - yt2mate.pro&body=${encodeURIComponent(emailContent)}`
-      
-      // Open email client
-      window.open(mailtoLink, '_blank')
-      
-      setSubmitStatus('success')
-      
-      // Reset form
-      setFormData({
-        name: '',
-        email: '',
-        offer: '',
-        message: ''
+      // Send form data to API
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
       })
-      
-      // Close popup after 2 seconds
-      setTimeout(() => {
-        setShowPopup(false)
-        setSubmitStatus('')
-      }, 2000)
+
+      const result = await response.json()
+
+      if (response.ok) {
+        setSubmitStatus('success')
+        
+        // Reset form
+        setFormData({
+          name: '',
+          email: '',
+          offer: '',
+          message: ''
+        })
+        
+        // Close popup after 3 seconds
+        setTimeout(() => {
+          setShowPopup(false)
+          setSubmitStatus('')
+        }, 3000)
+      } else {
+        setSubmitStatus('error')
+      }
       
     } catch (error) {
+      console.error('Form submission error:', error)
       setSubmitStatus('error')
     } finally {
       setIsSubmitting(false)
@@ -196,8 +194,8 @@ This inquiry was sent from the domain sale page.
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                   placeholder="your@email.com"
                 />
-              </div>
-              
+        </div>
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Your Offer (Optional)</label>
                 <input 
@@ -208,8 +206,8 @@ This inquiry was sent from the domain sale page.
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                   placeholder="Enter your offer amount"
                 />
-              </div>
-              
+        </div>
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Message *</label>
                 <textarea 
@@ -221,18 +219,18 @@ This inquiry was sent from the domain sale page.
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                   placeholder="Tell us about your interest in this domain..."
                 ></textarea>
-              </div>
-              
+        </div>
+
               {/* Status Messages */}
               {submitStatus === 'success' && (
                 <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
-                  ✅ Your inquiry has been sent! Your email client should open with a pre-filled message.
+                  ✅ Your inquiry has been received! We will contact you soon at {formData.email}.
                 </div>
               )}
               
               {submitStatus === 'error' && (
                 <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-                  ❌ There was an error sending your inquiry. Please try again or contact us directly.
+                  ❌ There was an error sending your inquiry. Please try again or contact us directly at teamlumina66@gmail.com.
                 </div>
               )}
               
