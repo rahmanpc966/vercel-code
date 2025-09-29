@@ -1,11 +1,7 @@
-"use client"
-
 import type { Metadata } from "next"
 import Navigation from "@/components/Navigation"
 import Footer from "@/components/Footer"
-import dynamic from "next/dynamic"
-
-const AdSettingsDashboard = dynamic(() => import("@/components/AdSettingsDashboard"), { ssr: false })
+import AdSettingsClient from "./ad-settings-client"
 
 export const metadata: Metadata = {
   title: "Ad Settings Dashboard - YT2MP3",
@@ -22,7 +18,7 @@ export default function AdSettingsPage() {
       <Navigation />
 
       <main className="flex-1 container mx-auto px-4 py-8">
-        <AdSettingsDashboard />
+        <AdSettingsClient />
       </main>
 
       <Footer />
