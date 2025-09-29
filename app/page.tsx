@@ -1,6 +1,28 @@
 "use client"
 
+import { useState } from "react"
+
 export default function DomainForSale() {
+  const [copySuccess, setCopySuccess] = useState(false)
+
+  const handleCopyEmail = async () => {
+    try {
+      await navigator.clipboard.writeText('teamlumina66@gmail.com')
+      setCopySuccess(true)
+      setTimeout(() => setCopySuccess(false), 2000) // Hide after 2 seconds
+    } catch (err) {
+      console.error('Failed to copy email:', err)
+      // Fallback for older browsers
+      const textArea = document.createElement('textarea')
+      textArea.value = 'teamlumina66@gmail.com'
+      document.body.appendChild(textArea)
+      textArea.select()
+      document.execCommand('copy')
+      document.body.removeChild(textArea)
+      setCopySuccess(true)
+      setTimeout(() => setCopySuccess(false), 2000)
+    }
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 flex items-center justify-center p-4">
@@ -51,6 +73,16 @@ export default function DomainForSale() {
               </div>
               </div>
 
+          {/* Copy Success Notification */}
+          {copySuccess && (
+            <div className="fixed top-4 right-4 z-50 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg animate-in slide-in-from-right duration-300">
+              <div className="flex items-center space-x-2">
+                <span className="text-xl">✓</span>
+                <span className="font-semibold">Email copied to clipboard!</span>
+              </div>
+            </div>
+          )}
+
           {/* Contact Info */}
           <div className="mt-12 text-center">
             <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 border border-white/20">
@@ -80,10 +112,10 @@ export default function DomainForSale() {
                   </a>
                   
                   <button 
-                    onClick={() => navigator.clipboard.writeText('teamlumina66@gmail.com')}
+                    onClick={handleCopyEmail}
                     className="bg-white/20 hover:bg-white/30 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 border border-white/30"
                   >
-                    Copy Email
+                    {copySuccess ? '✓ Copied!' : 'Copy Email'}
                   </button>
                 </div>
               </div>
