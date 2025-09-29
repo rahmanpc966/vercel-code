@@ -4,6 +4,14 @@ import { useState, useEffect } from "react"
 
 export default function DomainForSale() {
   const [showPopup, setShowPopup] = useState(false)
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    offer: '',
+    message: ''
+  })
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitStatus, setSubmitStatus] = useState('')
 
   useEffect(() => {
     // Show popup after 2 seconds
@@ -13,6 +21,61 @@ export default function DomainForSale() {
 
     return () => clearTimeout(timer)
   }, [])
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }))
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsSubmitting(true)
+    setSubmitStatus('')
+
+    try {
+      // Create email content
+      const emailContent = `
+Domain Inquiry for yt2mate.pro
+
+Name: ${formData.name}
+Email: ${formData.email}
+Offer: ${formData.offer || 'Not specified'}
+Message: ${formData.message}
+
+This inquiry was sent from the domain sale page.
+      `.trim()
+
+      // Create mailto link
+      const mailtoLink = `mailto:teamlumina66@gmail.com?subject=Domain Inquiry - yt2mate.pro&body=${encodeURIComponent(emailContent)}`
+      
+      // Open email client
+      window.open(mailtoLink, '_blank')
+      
+      setSubmitStatus('success')
+      
+      // Reset form
+      setFormData({
+        name: '',
+        email: '',
+        offer: '',
+        message: ''
+      })
+      
+      // Close popup after 2 seconds
+      setTimeout(() => {
+        setShowPopup(false)
+        setSubmitStatus('')
+      }, 2000)
+      
+    } catch (error) {
+      setSubmitStatus('error')
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 flex items-center justify-center p-4">
@@ -108,48 +171,77 @@ export default function DomainForSale() {
         </div>
 
             {/* Contact Form */}
-            <form className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Your Name</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Your Name *</label>
                 <input 
                   type="text" 
+                  name="name"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  required
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                   placeholder="Enter your name"
                 />
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Email Address *</label>
                 <input 
                   type="email" 
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  required
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                   placeholder="your@email.com"
                 />
-        </div>
-
+              </div>
+              
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Your Offer (Optional)</label>
                 <input 
                   type="text" 
+                  name="offer"
+                  value={formData.offer}
+                  onChange={handleInputChange}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                   placeholder="Enter your offer amount"
                 />
-        </div>
-
+              </div>
+              
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Message</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Message *</label>
                 <textarea 
                   rows={3}
+                  name="message"
+                  value={formData.message}
+                  onChange={handleInputChange}
+                  required
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                   placeholder="Tell us about your interest in this domain..."
                 ></textarea>
-        </div>
-
+              </div>
+              
+              {/* Status Messages */}
+              {submitStatus === 'success' && (
+                <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
+                  ✅ Your inquiry has been sent! Your email client should open with a pre-filled message.
+                </div>
+              )}
+              
+              {submitStatus === 'error' && (
+                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                  ❌ There was an error sending your inquiry. Please try again or contact us directly.
+                </div>
+              )}
+              
               <button 
                 type="submit"
-                className="w-full bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105"
+                disabled={isSubmitting}
+                className="w-full bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 disabled:from-gray-400 disabled:to-gray-500 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 disabled:scale-100 disabled:cursor-not-allowed"
               >
-                Send Inquiry
+                {isSubmitting ? 'Sending...' : 'Send Inquiry'}
               </button>
             </form>
 
