@@ -1,32 +1,41 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  typescript: {
-    ignoreBuildErrors: true,
+  reactStrictMode: true,
+  swcMinify: true,
+  experimental: {
+    optimizePackageImports: ["lucide-react"],
+  },
+  images: {
+    domains: ["img.youtube.com", "i.ytimg.com"],
+    formats: ["image/webp", "image/avif"],
+    unoptimized: true,
   },
   eslint: {
     ignoreDuringBuilds: true,
   },
-  images: {
-    domains: ["img.youtube.com", "i.ytimg.com"],
-    unoptimized: true,
+  typescript: {
+    ignoreBuildErrors: true,
   },
-  webpack: (config, { isServer }) => {
-    config.module.rules.push({
-      test: /\.svg$/,
-      use: ["@svgr/webpack"],
-    })
-
-    if (!isServer) {
-      config.resolve.fallback = {
-        ...config.resolve.fallback,
-        fs: false,
-      }
-    }
-
-    return config
-  },
-  experimental: {
-    esmExternals: "loose",
+  async headers() {
+    return [
+      {
+        source: "/(.*)",
+        headers: [
+          {
+            key: "X-Frame-Options",
+            value: "DENY",
+          },
+          {
+            key: "X-Content-Type-Options",
+            value: "nosniff",
+          },
+          {
+            key: "Referrer-Policy",
+            value: "strict-origin-when-cross-origin",
+          },
+        ],
+      },
+    ]
   },
 }
 
