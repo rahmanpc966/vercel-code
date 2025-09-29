@@ -1,331 +1,171 @@
-import type { Metadata } from "next"
-import YouTubeConverter from "@/components/YouTubeConverter"
-import Features from "@/components/Features"
-import HowItWorks from "@/components/HowItWorks"
-import FAQ from "@/components/FAQ"
-import EnhancedFAQ from "@/components/EnhancedFAQ"
-import AboutSection from "@/components/AboutSection"
-import AdvancedSEOContent from "@/components/AdvancedSEOContent"
-import TechnicalSpecs from "@/components/TechnicalSpecs"
-import Footer from "@/components/Footer"
-import Navigation from "@/components/Navigation"
-import Script from "next/script"
-import ProductionAdUnit from "@/components/ProductionAdUnit"
-import AdDebugger from "@/components/AdDebugger"
-import InternalLinkBanner from "@/components/InternalLinkBanner"
-import OrganizationSchema from "@/components/OrganizationSchema"
-import WebsiteSchema from "@/components/WebsiteSchema"
-import ArticleSchema from "@/components/ArticleSchema"
-import RelatedContent from "@/components/RelatedContent"
+"use client"
 
-export const metadata: Metadata = {
-  title: "YT2MP3 - #1 YouTube to MP3 Converter | Free HD Audio Extraction 2024",
-  description:
-    "🎵 Convert YouTube videos & Shorts to MP3 instantly! Free, fast, and high-quality (320kbps). No registration required. 50,000+ daily users trust our YouTube to MP3 converter.",
-  keywords: [
-    "youtube to mp3",
-    "youtube converter",
-    "youtube shorts to mp3",
-    "mp3 converter",
-    "download youtube audio",
-    "youtube to audio",
-    "free youtube converter",
-    "youtube mp3 320kbps",
-    "youtube audio extractor",
-    "convert youtube videos",
-    "youtube downloader mp3",
-    "online youtube converter",
-    "youtube to mp3 free",
-    "youtube music converter",
-    "youtube shorts converter",
-  ].join(", "),
-  alternates: {
-    canonical: "/",
-  },
-  openGraph: {
-    title: "YT2MP3 - #1 YouTube to MP3 Converter | Free HD Audio Extraction",
-    description:
-      "🎵 Convert YouTube videos & Shorts to MP3 instantly! Free, fast, and high-quality (320kbps). 50,000+ daily users trust our converter.",
-    type: "website",
-    url: "https://yt2mate.pro",
-    images: [
-      {
-        url: "https://yt2mate.pro/og-image.jpg",
-        width: 1200,
-        height: 630,
-        alt: "YT2MP3 - YouTube to MP3 Converter",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "YT2MP3 - #1 YouTube to MP3 Converter",
-    description: "🎵 Convert YouTube videos & Shorts to MP3 instantly! Free, fast, and high-quality (320kbps).",
-  },
-  other: {
-    "google-site-verification": "your-google-verification-code",
-    "msvalidate.01": "your-bing-verification-code",
-  },
-}
+import { useState, useEffect } from "react"
 
-// JSON-LD structured data for the homepage
-const structuredData = {
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "WebSite",
-      "@id": "https://yt2mate.pro/#website",
-      url: "https://yt2mate.pro/",
-      name: "YT2MP3 - YouTube to MP3 Converter",
-      description: "Convert YouTube videos and Shorts to MP3 format with our free online converter",
-      publisher: {
-        "@id": "https://yt2mate.pro/#organization",
-      },
-      potentialAction: [
-        {
-          "@type": "SearchAction",
-          target: {
-            "@type": "EntryPoint",
-            urlTemplate: "https://yt2mate.pro/search?q={search_term_string}",
-          },
-          "query-input": "required name=search_term_string",
-        },
-      ],
-      inLanguage: "en-US",
-    },
-    {
-      "@type": "WebApplication",
-      "@id": "https://yt2mate.pro/#webapp",
-      url: "https://yt2mate.pro/",
-      name: "YT2MP3 Converter",
-      description: "Free online YouTube to MP3 converter with high-quality audio extraction",
-      applicationCategory: "MultimediaApplication",
-      operatingSystem: "All",
-      browserRequirements: "Requires JavaScript. Requires HTML5.",
-      softwareVersion: "2.0",
-      aggregateRating: {
-        "@type": "AggregateRating",
-        ratingValue: "4.8",
-        reviewCount: "15420",
-        bestRating: "5",
-        worstRating: "1",
-      },
-      offers: {
-        "@type": "Offer",
-        price: "0",
-        priceCurrency: "USD",
-        availability: "https://schema.org/InStock",
-      },
-      featureList: [
-        "Convert YouTube videos to MP3",
-        "Convert YouTube Shorts to MP3",
-        "High-quality audio up to 320kbps",
-        "No registration required",
-        "Fast conversion speed",
-        "Mobile-friendly interface",
-        "Batch conversion support",
-        "Privacy-focused processing",
-      ],
-    },
-    {
-      "@type": "Organization",
-      "@id": "https://yt2mate.pro/#organization",
-      name: "YT2MP3",
-      url: "https://yt2mate.pro/",
-      logo: {
-        "@type": "ImageObject",
-        "@id": "https://yt2mate.pro/#logo",
-        url: "https://yt2mate.pro/logo.svg",
-        contentUrl: "https://yt2mate.pro/logo.svg",
-        width: 120,
-        height: 40,
-        caption: "YT2MP3 Logo",
-      },
-      image: {
-        "@id": "https://yt2mate.pro/#logo",
-      },
-      sameAs: ["https://twitter.com/yt2mp3", "https://facebook.com/yt2mp3"],
-      contactPoint: {
-        "@type": "ContactPoint",
-        contactType: "customer service",
-        availableLanguage: ["English"],
-        url: "https://yt2mate.pro/contact",
-      },
-    },
-    {
-      "@type": "WebPage",
-      "@id": "https://yt2mate.pro/#webpage",
-      url: "https://yt2mate.pro/",
-      name: "YT2MP3 - #1 YouTube to MP3 Converter | Free HD Audio Extraction",
-      isPartOf: {
-        "@id": "https://yt2mate.pro/#website",
-      },
-      about: {
-        "@id": "https://yt2mate.pro/#organization",
-      },
-      description:
-        "Convert YouTube videos & Shorts to MP3 instantly! Free, fast, and high-quality (320kbps). No registration required.",
-      breadcrumb: {
-        "@id": "https://yt2mate.pro/#breadcrumb",
-      },
-      inLanguage: "en-US",
-      potentialAction: [
-        {
-          "@type": "ReadAction",
-          target: ["https://yt2mate.pro/"],
-        },
-      ],
-    },
-  ],
-}
+export default function DomainForSale() {
+  const [showPopup, setShowPopup] = useState(false)
 
-export default function Home() {
+  useEffect(() => {
+    // Show popup after 2 seconds
+    const timer = setTimeout(() => {
+      setShowPopup(true)
+    }, 2000)
+
+    return () => clearTimeout(timer)
+  }, [])
+
   return (
-    <div className="min-h-screen flex flex-col">
-      {/* Schema Components - Only include relevant ones for homepage */}
-      <OrganizationSchema />
-      <WebsiteSchema />
-      <ArticleSchema
-        headline="Free YouTube to MP3 Converter - YT2MP3"
-        description="Convert your favorite YouTube videos to high-quality MP3 files for free. Fast, secure, and easy to use YouTube to MP3 converter."
-        datePublished="2024-01-01"
-        dateModified={new Date().toISOString()}
-        authorName="YT2MP3 Team"
-        url="https://yt2mate.pro"
-      />
+    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 flex items-center justify-center p-4">
+      {/* Background Animation */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse"></div>
+        <div className="absolute top-40 left-40 w-80 h-80 bg-indigo-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse"></div>
+      </div>
 
-      <header className="bg-[#0066FF]">
-        <Navigation />
-      </header>
+      {/* Main Content */}
+      <div className="relative z-10 text-center max-w-4xl mx-auto">
+        <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-12 shadow-2xl border border-white/20">
+          {/* Domain Name */}
+          <h1 className="text-6xl md:text-8xl font-bold text-white mb-6 bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
+            yt2mate.pro
+          </h1>
+          
+          {/* Subtitle */}
+          <h2 className="text-2xl md:text-3xl text-white/90 mb-8 font-light">
+            Premium Domain for Sale
+          </h2>
+          
+          {/* Description */}
+          <p className="text-lg text-white/80 mb-12 max-w-2xl mx-auto leading-relaxed">
+            This premium domain is perfect for YouTube conversion services, 
+            music platforms, or any multimedia business. 
+            <span className="text-yellow-300 font-semibold"> High commercial value</span> and 
+            <span className="text-green-300 font-semibold"> excellent SEO potential</span>.
+          </p>
 
-      <main className="flex-1">
-        {/* Hero Section */}
-        <section className="px-4 py-16 bg-[#0066FF] text-white text-center">
-          <div className="max-w-7xl mx-auto">
-            <h1 className="text-4xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              YouTube to MP3 Converter
-            </h1>
-            <p className="text-xl mb-8 text-white max-w-3xl mx-auto">
-              Convert your favorite YouTube videos and Shorts to high-quality MP3 files instantly.
-              <strong> 320kbps quality, lightning-fast speed, zero registration required!</strong>
-              Join 50,000+ daily users who trust YT2MP3 for premium audio conversion.
-            </p>
-            <YouTubeConverter />
-
-            {/* Trust Indicators */}
-            <div className="mt-8 flex flex-wrap justify-center items-center gap-6 text-sm opacity-90">
-              <div className="flex items-center gap-2">
-                <span>⚡</span>
-                <span>15-second average conversion</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span>🔒</span>
-                <span>100% secure & private</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span>🎵</span>
-                <span>Up to 320kbps quality</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span>📱</span>
-                <span>Works on all devices</span>
-              </div>
+          {/* Features */}
+          <div className="grid md:grid-cols-3 gap-6 mb-12">
+            <div className="bg-white/10 rounded-xl p-6 border border-white/20">
+              <div className="text-3xl mb-3">🎯</div>
+              <h3 className="text-xl font-semibold text-white mb-2">Premium Brand</h3>
+              <p className="text-white/70">Memorable and brandable domain name</p>
+            </div>
+            <div className="bg-white/10 rounded-xl p-6 border border-white/20">
+              <div className="text-3xl mb-3">📈</div>
+              <h3 className="text-xl font-semibold text-white mb-2">SEO Ready</h3>
+              <p className="text-white/70">Perfect for YouTube-related businesses</p>
+            </div>
+            <div className="bg-white/10 rounded-xl p-6 border border-white/20">
+              <div className="text-3xl mb-3">💰</div>
+              <h3 className="text-xl font-semibold text-white mb-2">High Value</h3>
+              <p className="text-white/70">Excellent commercial potential</p>
             </div>
           </div>
-        </section>
 
-        {/* First Ad Placement - Banner after hero */}
-        <div className="container mx-auto px-4 py-8">
-          <ProductionAdUnit 
-            adSlot="hero-001" 
-            placement="hero"
-            adFormat="horizontal" 
-            width={728} 
-            height={90} 
-            className="mb-4" 
-          />
+          {/* Contact Button */}
+          <button 
+            onClick={() => setShowPopup(true)}
+            className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white font-bold py-4 px-8 rounded-full text-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+          >
+            Contact Us for Price
+          </button>
+
+          {/* Contact Info */}
+          <div className="mt-8 text-white/60">
+            <p className="text-sm">Interested? Get in touch with us</p>
+            <p className="text-lg font-semibold text-white mt-2">teamlumina66@gmail.com</p>
+          </div>
         </div>
+      </div>
 
-        <Features />
+      {/* Beautiful Popup Modal */}
+      {showPopup && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          {/* Backdrop */}
+          <div 
+            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+            onClick={() => setShowPopup(false)}
+          ></div>
+          
+          {/* Popup Content */}
+          <div className="relative bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl transform animate-in zoom-in-95 duration-300">
+            {/* Close Button */}
+            <button 
+              onClick={() => setShowPopup(false)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-2xl"
+            >
+              ×
+            </button>
+            
+            {/* Popup Header */}
+            <div className="text-center mb-6">
+              <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-2xl">💎</span>
+              </div>
+              <h3 className="text-2xl font-bold text-gray-800 mb-2">Domain Inquiry</h3>
+              <p className="text-gray-600">Get in touch about yt2mate.pro</p>
+            </div>
 
-        <div className="container mx-auto px-4">
-          <InternalLinkBanner />
+            {/* Contact Form */}
+            <form className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Your Name</label>
+                <input 
+                  type="text" 
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  placeholder="Enter your name"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                <input 
+                  type="email" 
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  placeholder="your@email.com"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Your Offer (Optional)</label>
+                <input 
+                  type="text" 
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  placeholder="Enter your offer amount"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Message</label>
+                <textarea 
+                  rows={3}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  placeholder="Tell us about your interest in this domain..."
+                ></textarea>
+              </div>
+              
+              <button 
+                type="submit"
+                className="w-full bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105"
+              >
+                Send Inquiry
+              </button>
+            </form>
+
+            {/* Direct Contact */}
+            <div className="mt-6 pt-6 border-t border-gray-200 text-center">
+              <p className="text-sm text-gray-600 mb-2">Or contact us directly:</p>
+              <a 
+                href="mailto:teamlumina66@gmail.com"
+                className="text-purple-600 hover:text-purple-800 font-semibold"
+              >
+                teamlumina66@gmail.com
+              </a>
+            </div>
+          </div>
         </div>
-
-        <HowItWorks />
-
-        {/* Second Ad Placement - Rectangle in middle content */}
-        <div className="container mx-auto px-4 py-8">
-          <ProductionAdUnit 
-            adSlot="content-001" 
-            placement="inline"
-            adFormat="rectangle" 
-            width={300} 
-            height={250} 
-            className="mb-8" 
-          />
-        </div>
-
-        <TechnicalSpecs />
-        <AdvancedSEOContent />
-
-        {/* Third Ad Placement - Banner before FAQ */}
-        <div className="container mx-auto px-4 py-6">
-          <ProductionAdUnit 
-            adSlot="footer-001" 
-            placement="footer"
-            adFormat="horizontal" 
-            width={728} 
-            height={90} 
-            className="mb-6" 
-          />
-        </div>
-
-        <FAQ />
-        <EnhancedFAQ />
-        <AboutSection />
-        <RelatedContent />
-      </main>
-
-      <Footer />
-
-      {/* Ad Debugger - Only show in development */}
-      {process.env.NODE_ENV === "development" && <AdDebugger />}
-
-      {/* Structured Data */}
-      <Script id="structured-data" type="application/ld+json" strategy="afterInteractive">
-        {JSON.stringify(structuredData)}
-      </Script>
-
-      {/* Additional Schema for Software Application */}
-      <Script id="software-app-schema" type="application/ld+json" strategy="afterInteractive">
-        {JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "SoftwareApplication",
-          name: "YT2MP3 YouTube to MP3 Converter",
-          operatingSystem: "Web Browser",
-          applicationCategory: "MultimediaApplication",
-          aggregateRating: {
-            "@type": "AggregateRating",
-            ratingValue: "4.8",
-            ratingCount: "15420",
-          },
-          offers: {
-            "@type": "Offer",
-            price: "0.00",
-            priceCurrency: "USD",
-          },
-          downloadUrl: "https://yt2mate.pro/",
-          featureList: [
-            "YouTube to MP3 conversion",
-            "YouTube Shorts support",
-            "High-quality audio extraction",
-            "Batch processing",
-            "Mobile optimization",
-            "No registration required",
-          ],
-        })}
-      </Script>
+      )}
     </div>
   )
 }
